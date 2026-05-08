@@ -45,3 +45,5 @@ export const isChecklist = (note: AnyNote): note is Checklist =>
 
 export const isIdeaNote = (note: AnyNote): note is IdeaNote =>
     "tags" in note;
+
+export type NoteType = "note" | "checklist" | "idea";
