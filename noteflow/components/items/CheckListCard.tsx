@@ -34,12 +34,18 @@ export default function ChecklistCard({ checklist, onPress }: ChecklistCardProps
 const styles = StyleSheet.create({
     card: {
         backgroundColor: color.neutral[0],
-        borderRadius: radius.md,
         padding: spacing[4],
         marginHorizontal: spacing[4],
         marginVertical: spacing[2],
         borderWidth: 1,
         borderColor: color.neutral[200],
+        borderRadius: radius.lg,
+        shadowColor: color.primary[900] ?? "#1a237e",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
+        overflow: "hidden",
     },
     title: {
         fontSize: typography.fontSize.lg,
