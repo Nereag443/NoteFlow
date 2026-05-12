@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert } from "react-native";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { useNoteStore } from "@/store/notesStore";
 import { color, typography, spacing, radius } from "@/constants/theme";
+import * as Haptics from "expo-haptics";
 
 export default function ChecklistDetail() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,9 +20,25 @@ export default function ChecklistDetail() {
         );
     }
     const handleDelete = () => {
-        deleteNote(note.id);
-        router.back();
-    }
+    Alert.alert(
+        "Eliminar nota",
+        "¿Estás seguro de que quieres eliminar esta nota?",
+        [
+            {
+                text: "Cancelar", style: "cancel"
+            },
+            {
+                text: "Eliminar",
+                style: "destructive",
+                onPress: () => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    deleteNote(note.id);
+                    router.back();
+                }
+            }
+        ]
+    )
+}
     return (
         <>
             <Stack.Screen
