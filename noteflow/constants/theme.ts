@@ -1,5 +1,6 @@
 import { MD3LightTheme, MD3DarkTheme } from "react-native-paper";
 import { useColorScheme } from "react-native";
+import { useNoteStore } from "@/store/notesStore";
 
 export const color = {
   primary: {
@@ -111,7 +112,15 @@ export const darkTheme = {
     },
 };
 
-export const useTheme = () => {
+export const useAppTheme = () => {
+    const themeMode = useNoteStore((state) => state.themeMode);
     const colorScheme = useColorScheme();
-    return colorScheme === "dark" ? darkTheme : lightTheme;
-}
+    const resolvedScheme = themeMode === "system" ? colorScheme : themeMode;
+    return resolvedScheme === "dark" ? darkTheme : lightTheme;
+};
+
+export const useIsDarkMode = () => {
+    const themeMode = useNoteStore((state) => state.themeMode);
+    const colorScheme = useColorScheme();
+    return themeMode === "system" ? colorScheme === "dark" : themeMode === "dark";
+};
