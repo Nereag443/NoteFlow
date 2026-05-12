@@ -3,6 +3,7 @@ import { IdeaNote } from "@/types";
 import { color, radius, spacing, typography } from "@/constants/theme";
 import { useRef } from "react";
 import Svg, { Polygon } from "react-native-svg";
+import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
 
 const CARD_WIDTH = 160;
 
@@ -15,6 +16,7 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
     const date = new Date(idea.updatedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
     const rotation = useRef(`${(Math.random() * 6 - 3).toFixed(1)}deg`).current;
     return (
+        <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
         <Pressable style={[styles.card, { backgroundColor: idea.color, transform: [{ rotate:rotation }] }]} onPress={onPress}>
             <Svg 
                 width={28}
@@ -40,6 +42,7 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
             </View>
             <Text style={styles.date}>{date}</Text>
         </Pressable>
+        </Animated.View>
     );
 }
 

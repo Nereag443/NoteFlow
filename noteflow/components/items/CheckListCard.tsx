@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Checklist } from "@/types";
 import { color, typography, spacing, radius } from "@/constants/theme"
+import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
 
 interface ChecklistCardProps {
     checklist: Checklist;
@@ -17,6 +18,7 @@ export default function ChecklistCard({ checklist, onPress }: ChecklistCardProps
         year: "numeric",
     })
     return (
+        <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
         <Pressable style={styles.card} onPress={onPress}>
             <Text style={styles.title} numberOfLines={1}>{checklist.title}</Text>
             <Text style={styles.counter}>{completed}/{total} tareas completadas</Text>
@@ -25,6 +27,7 @@ export default function ChecklistCard({ checklist, onPress }: ChecklistCardProps
             </View>
             <Text style={styles.date}>{date}</Text>
         </Pressable>
+        </Animated.View>
     );
 }
 

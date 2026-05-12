@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Note } from '@/types';
 import { color, typography, spacing, radius } from '@/constants/theme';
+import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
 
 interface NoteCardProps {
   note: Note;
@@ -16,6 +17,7 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
     });
 
     return (
+        <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
         <Pressable style={styles.card} onPress={onPress}>
             <View style={styles.header}>
                 <Text style={styles.title}>{note.title}</Text>
@@ -23,6 +25,7 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
             </View>
             <Text style={styles.preview}>{preview}</Text>
         </Pressable>
+        </Animated.View>
     );
 }
 
