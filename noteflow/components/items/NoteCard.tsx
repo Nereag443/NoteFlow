@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Note } from '@/types';
-import { color, typography, spacing, radius } from '@/constants/theme';
+import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
 import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,22 +17,23 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
         year: 'numeric'
     });
 
+    const theme = useAppTheme();
     return (
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft} style={styles.wrapper}>
-        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed]} onPress={onPress}>
+        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface }]} onPress={onPress}>
             <View style={styles.accent} />
             <View style={styles.content}>
             <View style={styles.header}>
-                <Text style={styles.title} numberOfLines={1}>{note.title}</Text>
-                <Ionicons name='chevron-forward' size={16} color={color.neutral[400]} />
+                <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{note.title}</Text>
+                <Ionicons name='chevron-forward' size={18} color={theme.colors.textMuted} />
             </View>
             {preview ? (
-                <Text style={styles.preview} numberOfLines={2}>{preview}</Text>
+                <Text style={[styles.preview, { color: theme.colors.textMuted }]} numberOfLines={2}>{preview}</Text>
             ) : null}
             <View style={styles.footer}>
                 <View style={styles.footerLeft}>
-                    <Ionicons name='time-outline' size={12} color={color.neutral[400]} />
-                    <Text style={styles.date}>{date}</Text>
+                    <Ionicons name='time-outline' size={12} color={theme.colors.textMuted} />
+                    <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
                 </View>
             </View>
             </View>
@@ -50,16 +51,16 @@ const styles = StyleSheet.create({
         backgroundColor: color.neutral[0],
         borderRadius: radius.lg,
         flexDirection: "row",
-        shadowColor: color.primary[900] ?? "#1a237e",
-        shadowOffset: { width: 0, height: 4 },
+        shadowColor: color.neutral[900],
+        shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowRadius: 20,
+        elevation: 6,
         overflow: "hidden",
     },
     cardPressed: {
-        opacity: 0.92,
-        transform: [{ scale: 0.98 }],
+        opacity: 0.96,
+        transform: [{ scale: 0.985 }],
     },
     accent: {
         width: 4,
@@ -68,13 +69,14 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         padding: spacing[4],
+        gap: spacing[2],
     },
     title: {
         flex: 1,
         fontSize: typography.fontSize.lg,
         fontWeight: typography.fontWeight.bold,
         color: color.neutral[900],
-        marginBottom: spacing[2],
+        marginBottom: spacing[1],
     },
     preview: {
         fontSize: typography.fontSize.sm,
@@ -100,6 +102,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: spacing[1],
     },
 });

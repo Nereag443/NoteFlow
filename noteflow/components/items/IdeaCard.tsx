@@ -49,15 +49,15 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
 const styles = StyleSheet.create ({
     card: {
         width: CARD_WIDTH,
-        minHeight: 140,
-        borderRadius: radius.md,
+        minHeight: 160,
+        borderRadius: radius.xl,
         padding: spacing[4],
         margin: spacing[2],
         shadowColor: color.neutral[900],
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 4,
+        shadowRadius: 18,
+        elevation: 6,
         overflow: "hidden",
         borderTopRightRadius: 0,
     },
@@ -65,6 +65,7 @@ const styles = StyleSheet.create ({
         fontSize: typography.fontSize.lg,
         fontWeight: typography.fontWeight.semibold,
         marginBottom: spacing[2],
+        color: color.neutral[900],
     },
     tags: {
         flexDirection: "row",
@@ -73,10 +74,12 @@ const styles = StyleSheet.create ({
         marginBottom: spacing[2],
     },
     chip: {
-        backgroundColor: color.neutral[200],
+        backgroundColor: color.neutral[0],
         borderRadius: radius.sm,
         paddingHorizontal: spacing[2],
         paddingVertical: spacing[1],
+        borderWidth: 1,
+        borderColor: color.neutral[100],
     },
     chipText: {
         fontSize: typography.fontSize.sm,
