@@ -4,13 +4,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNotesSlice, NotesSlice } from "./slices/notesSlice";
 import { createChecklistSlice, ChecklistSlice } from "./slices/checklistSlice";
 import { createIdeasSlice, IdeasSlice } from "./slices/ideasSlice";
+import { createThemeSlice, ThemeSlice } from "./slices/themeSlice";
 
 interface HydrationSlice {
   _hasHydrated: boolean;
   setHasHydrated: (value: boolean) => void;
 }
 
-type NoteStore = NotesSlice & ChecklistSlice & IdeasSlice & HydrationSlice;
+type NoteStore = NotesSlice & ChecklistSlice & IdeasSlice & ThemeSlice & HydrationSlice;
 
 export const useNoteStore = create<NoteStore>()(
   persist(
@@ -18,6 +19,7 @@ export const useNoteStore = create<NoteStore>()(
       ...createNotesSlice(set, get, api),
       ...createChecklistSlice(set, get, api),
       ...createIdeasSlice(set, get, api),
+      ...createThemeSlice(set, get, api),
       _hasHydrated: false,
       setHasHydrated: (value) => set({ _hasHydrated: value }),
     }),

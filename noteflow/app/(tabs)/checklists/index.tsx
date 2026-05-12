@@ -7,14 +7,16 @@ import { Checklist } from "@/types";
 import EmptyState from "@/components/EmptyState";
 import SearchBar from "@/components/SearchBar";
 import { useState } from "react";
+import { useAppTheme } from "@/constants/theme";
 
 export default function ChecklistScreen() {
+    const theme = useAppTheme();
     const checklists = useNoteStore((state) => state.checklists)
     const [search, setSearch] = useState("")
     const filtered = checklists.filter((c) =>
         c.title.toLowerCase().includes(search.toLowerCase()));
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
             <SearchBar
                 value={search}
                 onChange={setSearch}

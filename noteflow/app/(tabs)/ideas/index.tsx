@@ -7,12 +7,14 @@ import { useEffect } from "react";
 import EmptyState from "@/components/EmptyState";
 import { useState } from "react";
 import SearchBar from "@/components/SearchBar";
+import { useAppTheme } from "@/constants/theme";
 
 const NUM_COLUMNS = 2;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_WIDTH = (SCREEN_WIDTH - 48) / NUM_COLUMNS;
 
 export default function IdeasScreen() {
+    const theme = useAppTheme();
     const ideas = useNoteStore((state) => state.ideas);
     const addIdea = useNoteStore((state) => state.addIdea);
     const [search, setSearch] = useState("");
@@ -23,7 +25,7 @@ export default function IdeasScreen() {
     useEffect(() => {}, []);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
             <SearchBar
                 value={search}
                 onChange={setSearch}
