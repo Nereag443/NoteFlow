@@ -1,4 +1,4 @@
-import { Dimensions, View, StyleSheet } from "react-native";
+import { Dimensions, View, StyleSheet, Text } from "react-native";
 import { router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { useNoteStore } from "@/store/notesStore";
@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import EmptyState from "@/components/EmptyState";
 import { useState } from "react";
 import SearchBar from "@/components/SearchBar";
-import { useAppTheme } from "@/constants/theme";
+import { useAppTheme, typography, spacing } from "@/constants/theme";
 
 const NUM_COLUMNS = 2;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -31,13 +31,24 @@ export default function IdeasScreen() {
                 onChange={setSearch}
                 placeholder="Buscar ideas..."
             />
+            {ideas.length > 0 && (
+                <Text style={[styles.counter, { color: theme.colors.textMuted }] }>
+                    {filtered.length} {filtered.length === 1 ? "idea" : "ideas"}
+                        </Text>
+            )}
             {filtered.length === 0 && search.length === 0 ? (
                 <EmptyState
-                    icon="bulb-outline"
+                    icon="document-text-outline"
                     title="No hay ideas"
                     subtitle="Pulsa + para plasmar tu primera idea!"
                 />
-            ) : (
+            ) : filtered.length === 0 && search.length > 0 ? (
+                <EmptyState
+                    icon="search-outline"
+                    title="Sin resultados"
+                    subtitle={`No hay ideas que coincidan con "${search}"`}
+                            />
+                        ) : (
             <FlashList
                 data={filtered}
                 numColumns={NUM_COLUMNS}
@@ -62,4 +73,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    counter: {
+        fontSize: typography.fontSize.xs,
+        marginHorizontal: spacing[4],
+        marginBottom: spacing[1],
+    }
 });
