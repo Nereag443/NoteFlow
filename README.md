@@ -14,15 +14,42 @@ NoteFlow es una aplicaciónmóvil de gestión de notas desarrollada con React Na
 
 ```bash
 noteflow/
-├── app/                  # Rutas y pantallas (Expo Router)
-├── assets/               # Imágenes, fuentes y recursos estáticos
-├── components/           # Componentes reutilizables
-├── constants/            # Constantes y configuración
-├── store/                # Estado global (Zustand)
-├── types/                # Tipos TypeScript
-├── babel.config.js
-├── app.json
-└── package.json
+├── app/                        # Rutas y pantallas (Expo Router)
+│   ├── (tabs)/                 # Navegación por pestañas
+│   │    ├── _layout.tsx        # Layout principal de tabs
+│   │    ├── checklists/        # Módulo de checklists
+│   │    │   ├── [id].tsx       # Detalle de checklist
+│   │    │   └── index.tsx      # Lista de checklists
+│   │    ├── ideas/             # Módulo de ideas
+│   │    │   ├── [id].tsx       # Detalle de idea
+│   │    │   └── index.tsx      # Lista de ideas
+│   │    ├── notas/             # Módulo de notas
+│   │    │    ├── [id].tsx      # Detalle de nota
+│   │    │    └── index.tsx     # Lista de notas
+│   │    └── _layout.tsx        # Layout principal de tabs
+│   ├── _layout.tsx             # Layout raíz
+│   └── new-note.tsx            # Crear nueva nota
+├── assets/                     # Imágenes y recursos estáticos
+├── components/                 # Componentes reutilizables
+│   ├── forms/                  # Formularios
+│   │   ├── ChecklistForm.tsx
+│   │   ├── IdeaForm.tsx
+│   │   ├── NoteForm.tsx
+│   │   └── TypeSelector.tsx
+│   └── items/                  # Componentes de lista
+│       ├── EmptyState.tsx
+│       └── SearchBar.tsx
+├── constants/                  # Constantes y configuración
+│   └── theme.ts                # Tema visual
+├── store/                      # Estado global (Zustand)
+│   ├── slices/                 # Slices por módulo
+│   │   ├── checklistSlice.ts
+│   │   ├── ideasSlice.ts
+│   │   ├── notesSlice.ts
+│   │   └── themeSlice.ts
+│   └── notesStore.ts           # Store principal
+└── types/                      # Tipos TypeScript
+    └── index.ts
 ```
 
 ## Requisitos previos
@@ -73,4 +100,4 @@ Pulsa sobre cualquier nota en la lista para abrirla y editarla directamente.
 Desliza la nota hacia la izquierda o mantén pulsado para acceder a la opción de eliminar.
 
 ## Documentación
-La documentación detallada de la aplicación se puede encontrar en la carpeta [`/docs](/docs/).
+La documentación detallada de la aplicación se puede encontrar en la carpeta [`/docs`](/docs/).
