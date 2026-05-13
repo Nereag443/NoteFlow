@@ -16,7 +16,6 @@ NoteFlow es una aplicaciónmóvil de gestión de notas desarrollada con React Na
 noteflow/
 ├── app/                        # Rutas y pantallas (Expo Router)
 │   ├── (tabs)/                 # Navegación por pestañas
-│   │    ├── _layout.tsx        # Layout principal de tabs
 │   │    ├── checklists/        # Módulo de checklists
 │   │    │   ├── [id].tsx       # Detalle de checklist
 │   │    │   └── index.tsx      # Lista de checklists
