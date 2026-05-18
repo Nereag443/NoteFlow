@@ -9,6 +9,7 @@ NoteFlow es una aplicación móvil de gestión de notas desarrollada con React N
  - [Zustand](https://github.com/pmndrs/zustand) (Gestión de estado global)
  - [React Native Reanimated](https://www.reanimated2.com/) (Animaciones fluidas)
  - [Zod](https://zod.dev/) (Validación de datos)
+ - [TypeScript](https://www.typescriptlang.org/)
 
 ## Estructura del proyecto
 
@@ -17,15 +18,18 @@ noteflow/
 ├── app/                        # Rutas y pantallas (Expo Router)
 │   ├── (tabs)/                 # Navegación por pestañas
 │   │    ├── checklists/        # Módulo de checklists
-│   │    │   ├── [id].tsx       # Detalle de checklist
 │   │    │   └── index.tsx      # Lista de checklists
 │   │    ├── ideas/             # Módulo de ideas
-│   │    │   ├── [id].tsx       # Detalle de idea
 │   │    │   └── index.tsx      # Lista de ideas
 │   │    ├── notas/             # Módulo de notas
-│   │    │    ├── [id].tsx      # Detalle de nota
 │   │    │    └── index.tsx     # Lista de notas
 │   │    └── _layout.tsx        # Layout principal de tabs
+│   ├── checklists/
+│   │   └── [id].tsx            # Detalle de checklist
+│   ├── ideas/
+│   │   └── [id].tsx            # Detalle de idea
+│   ├── notas/
+│   │   └── [id].tsx            # Detalle de nota
 │   ├── _layout.tsx             # Layout raíz
 │   └── new-note.tsx            # Crear nueva nota
 ├── assets/                     # Imágenes y recursos estáticos
@@ -56,7 +60,7 @@ noteflow/
 Asegúrate de tener instalado:
  - Node.js
  - npm
- - Expo go en tu dispositivo móvil (para desarrollo)
+ - Expo Go en tu dispositivo móvil (para desarrollo)
 
 ## Instalación
 
@@ -80,10 +84,12 @@ Escanea el código QR que aparece en la terminal con Expo Go en tu móvil.
 
 ## Funcionalidades principales
  - Creación de notas
- - Edición de notas
- - Eliminación de notas
- - Búsqueda
- - Persistencia local
+ - Edición y eliminación de notas
+ - Gestión de checklists
+ - Organización de ideas
+ - Búsqueda de contenido
+ - Persistencia de datos
+ - Navegación optimizada con Expo Router
 
 ## Ejemplos de uso
 
@@ -100,7 +106,7 @@ Desliza la nota hacia la izquierda o mantén pulsado para acceder a la opción d
 
 Este proyecto consume una API REST separada, puedes ver el repositorio del servidor aquí:
 
-[![Backend Repo](https://img.shields.io/badge/backend-repository-blue)](https://github.com/Nereag443/noteflow-api.git).
+[![Backend Repository](https://img.shields.io/badge/Backend-API-blue?style=for-the-badge&logo=github)](https://github.com/Nereag443/noteflow-api)
 
 ## Documentación
 La documentación detallada de la aplicación se puede encontrar en la carpeta [`/docs`](/docs/).
