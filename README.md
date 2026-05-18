@@ -98,5 +98,11 @@ Pulsa sobre cualquier nota en la lista para abrirla y editarla directamente.
 **Eliminar una nota**  
 Desliza la nota hacia la izquierda o mantén pulsado para acceder a la opción de eliminar.
 
+## API
+
+Este proyecto consume una API REST separada:
+
+[![Backend Repo](https://img.shields.io/badge/backend-repository-blue)](https://github.com/Nereag443/noteflow-api.git).
+
 ## Documentación
 La documentación detallada de la aplicación se puede encontrar en la carpeta [`/docs`](/docs/).
