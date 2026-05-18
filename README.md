@@ -1,14 +1,14 @@
 # NoteFlow
-NoteFlow es una aplicaciónmóvil de gestión de notas desarrollada con React Native y Expo. Permite crear, organizar y gestionar notas de forma rápida e intuitiva desde cualquier dispositivo móvil.
+NoteFlow es una aplicación móvil de gestión de notas desarrollada con React Native y Expo. Permite crear, organizar y gestionar notas de forma rápida e intuitiva desde cualquier dispositivo móvil.
 
 ## Tecnologías utilizadas
 
- - Expo
- - React Native
- - Expo Router
- - Zustand
- - React NAtive Reanimated
- - Zod
+ - [Expo](https://expo.dev/)
+ - [React Native](https://reactnative.dev/)
+ - [Expo Router](https://docs.expo.dev/router/introduction/) (Navegación basada en archivos)
+ - [Zustand](https://github.com/pmndrs/zustand) (Gestión de estado global)
+ - [React Native Reanimated](https://www.reanimated2.com/) (Animaciones fluidas)
+ - [Zod](https://zod.dev/) (Validación de datos)
 
 ## Estructura del proyecto
 
@@ -68,17 +68,15 @@ cd noteflow
 
 2. Instala las dependencias
 ```bash
-cd frontend
 npm install
 ```
 
 ## Cómo usar el proyecto
-Iniciar el proyecto
+Iniciar el proyecto (Asegurarse de estar en noteflow/)
 ```bash
-cd noteflow
 npx expo start
 ```
-Escanea el QR con Expo Go en tu móvil.
+Escanea el código QR que aparece en la terminal con Expo Go en tu móvil.
 
 ## Funcionalidades principales
  - Creación de notas
@@ -100,7 +98,7 @@ Desliza la nota hacia la izquierda o mantén pulsado para acceder a la opción d
 
 ## API
 
-Este proyecto consume una API REST separada:
+Este proyecto consume una API REST separada, puedes ver el repositorio del servidor aquí:
 
 [![Backend Repo](https://img.shields.io/badge/backend-repository-blue)](https://github.com/Nereag443/noteflow-api.git).
 
