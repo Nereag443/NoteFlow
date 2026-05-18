@@ -26,6 +26,9 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="new-note" options={{ presentation: "modal", title: "Nueva nota "}} />
+        <Stack.Screen name="notas/[id]" options={{ title: "Nota" }} />
+        <Stack.Screen name="checklists/[id]" options={{ title: "Checklist" }} />
+        <Stack.Screen name="ideas/[id]" options={{ title: "Idea" }} />
       </Stack>
     </PaperProvider>
     </GestureHandlerRootView>
