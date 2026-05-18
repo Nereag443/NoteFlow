@@ -1,11 +1,13 @@
 import { Checklist } from "@/types";
 import { StateCreator } from "zustand";
+import { ChecklistItem } from "@/types";
 
 export interface ChecklistSlice {
   checklists: Checklist[];
   addChecklist: (checklist: Checklist) => void;
   deleteChecklist: (id: string) => void;
   toggleChecklistItem: (checklistId: string, itemId: string) => void;
+  addChecklistItem: (checklistId: string, item: ChecklistItem) => void;
 }
 
 export const createChecklistSlice: StateCreator<ChecklistSlice> = (set) => ({
@@ -26,6 +28,18 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set) => ({
               items: c.items.map((i) =>
                 i.id === itemId ? { ...i, isCompleted: !i.isCompleted } : i
               ),
+              updatedAt: new Date(),
+            }
+      ),
+    })),
+  addChecklistItem: (checklistId, item) =>
+    set((state) => ({
+      checklists: state.checklists.map((c) =>
+        c.id !== checklistId
+          ? c
+          : {
+              ...c,
+              items: [...c.items, item],
               updatedAt: new Date(),
             }
       ),
