@@ -72,7 +72,7 @@ npm install
 ```
 
 ## Cómo usar el proyecto
-Iniciar el proyecto (Asegurarse de estar en noteflow/)
+Iniciar el proyecto (Asegurarse de estar en `noteflow/`)
 ```bash
 npx expo start
 ```
