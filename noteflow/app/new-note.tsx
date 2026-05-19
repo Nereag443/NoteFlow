@@ -122,11 +122,11 @@ export default function NewNote() {
           keyboardShouldPersistTaps="handled"
         >
           <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{pageTitle}</Text>
-          <View style={[styles.card, { backgroundColor: theme.colors.surface }]}> 
+          <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
             <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>Tipo</Text>
             <TypeSelector type={type} onSelectType={setType} />
           </View>
-          <View style={[styles.card, { backgroundColor: theme.colors.surface }]}> 
+          <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
             {type === "note" && (
               <NoteForm
                 title={title}
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[10],
   },
   pageTitle: {
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
     color: color.neutral[900],
     marginBottom: spacing[4],

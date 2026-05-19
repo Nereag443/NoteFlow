@@ -4,21 +4,21 @@ import { useNoteStore } from "@/store/notesStore";
 
 export const color = {
   primary: {
-    50:  "#e8eaf6",
-    100: "#c5cae9",
-    300: "#7986cb",
-    500: "#3f51b5",
-    700: "#283593",
-    900: "#1a237e",
+    50:  "#e8f1ff",
+    100: "#cce0ff",
+    300: "#7db8ff",
+    500: "#6366f1",
+    700: "#1a5fd4",
+    900: "#0a3490",
   },
   neutral: {
     0:   "#ffffff",
-    50:  "#faf8f5",
-    100: "#f2ede6",
-    200: "#e0d5c8",
-    400: "#b5a898",
-    600: "#6b5f52",
-    900: "#2c2420",
+    50:  "#f0f6ff",
+    100: "#ddeeff",
+    200: "#c0dbff",
+    400: "#5b8fd6",
+    600: "#3a6ab5",
+    900: "#0f2250",
   },
   semantic: {
     success: "#40c057",
@@ -93,9 +93,11 @@ export const lightTheme = {
     background: color.neutral[50],
     text: color.neutral[900],
     surface: color.neutral[0],
+    surfaceVariant: color.neutral[50],
     textMuted: color.neutral[400],
     border: color.neutral[200],
     primary: color.primary[500],
+    elevation: "rgba(99,102,241,0.12)",
     },
 };
 
@@ -105,10 +107,12 @@ export const darkTheme = {
         ...MD3DarkTheme.colors,
     background: color.neutral[900],
     text: color.neutral[50],
-    surface: color.neutral[600],
+    surface: color.neutral[900],
+    surfaceVariant: color.neutral[600],
     textMuted: color.neutral[400],
     border: color.neutral[600],
     primary: color.primary[300],
+    elevation: "rgba(255,255,255,0.08)",
     },
 };
 

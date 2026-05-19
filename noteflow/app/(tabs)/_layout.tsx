@@ -51,9 +51,12 @@ export default function TabsLayout() {
         },
       ]}
     >
-      <View style={[styles.header, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.border }]}> 
-        <Text style={[styles.title, { color: theme.colors.text }]}>NoteFlow</Text>
-        <Pressable style={[styles.themeToggle, { backgroundColor: theme.colors.surface }]} onPress={toggleTheme}>
+      <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.surfaceVariant, shadowColor: theme.colors.elevation }]}> 
+        <View>
+          <Text style={[styles.title, { color: theme.colors.text }]}>NoteFlow</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>Tus notas más claras y ordenadas</Text>
+        </View>
+        <Pressable style={[styles.themeToggle, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]} onPress={toggleTheme}>
           <Ionicons
             name={isDarkMode ? "moon" : "sunny"}
             size={20}
@@ -69,13 +72,14 @@ export default function TabsLayout() {
             tabBarActiveTintColor: theme.colors.primary,
             tabBarInactiveTintColor: theme.colors.textMuted,
             tabBarStyle: {
-              backgroundColor: theme.colors.surface,
-              borderTopWidth: 0,
+              backgroundColor: theme.colors.surfaceVariant,
+              borderTopWidth: 1,
+              borderTopColor: theme.colors.border,
               height: 72,
               paddingTop: 10,
-              shadowColor: theme.colors.text,
+              shadowColor: theme.colors.elevation,
               shadowOffset: { width: 0, height: -4 },
-              shadowOpacity: 0.08,
+              shadowOpacity: 0.12,
               shadowRadius: 18,
               elevation: 12,
             },
@@ -131,20 +135,31 @@ const styles = StyleSheet.create ({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingVertical: 20,
+    marginBottom: 4,
     borderBottomWidth: 1,
     borderBottomColor: color.neutral[100],
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 8,
   },
   title: {
-    fontSize: typography.fontSize.xl,
+    fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
+  },
+  subtitle: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    marginTop: 4,
   },
   themeToggle: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     borderRadius: 999,
+    borderWidth: 1,
   },
   themeIcon: {
     marginRight: 8,

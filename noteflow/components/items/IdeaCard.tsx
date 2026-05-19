@@ -14,10 +14,9 @@ interface IdeaCardProps {
 
 export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
     const date = new Date(idea.updatedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
-    const rotation = useRef(`${(Math.random() * 6 - 3).toFixed(1)}deg`).current;
     return (
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
-        <Pressable style={[styles.card, { backgroundColor: idea.color, transform: [{ rotate:rotation }] }]} onPress={onPress}>
+        <Pressable style={[styles.card, { backgroundColor: idea.color }]} onPress={onPress}>
             <Svg 
                 width={28}
                 height={28}
@@ -54,12 +53,11 @@ const styles = StyleSheet.create ({
         padding: spacing[4],
         margin: spacing[2],
         shadowColor: color.neutral[900],
-        shadowOffset: { width: 0, height: 8 },
+        shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.08,
-        shadowRadius: 18,
-        elevation: 6,
+        shadowRadius: 24,
+        elevation: 8,
         overflow: "hidden",
-        borderTopRightRadius: 0,
     },
     title: {
         fontSize: typography.fontSize.lg,

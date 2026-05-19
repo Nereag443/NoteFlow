@@ -20,8 +20,8 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
     const theme = useAppTheme();
     return (
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft} style={styles.wrapper}>
-        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface }]} onPress={onPress}>
-            <View style={styles.accent} />
+        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderWidth: 1 }]} onPress={onPress}>
+            <View style={[styles.accent, { backgroundColor: theme.colors.primary }]} />
             <View style={styles.content}>
             <View style={styles.header}>
                 <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{note.title}</Text>
@@ -44,18 +44,17 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
 
 const styles = StyleSheet.create({
     wrapper: {
-        marginHorizontal: spacing[4],
+        marginHorizontal: spacing[3],
         marginVertical: spacing[2],
     },
     card: {
-        backgroundColor: color.neutral[0],
-        borderRadius: radius.lg,
+        borderRadius: radius.xl,
         flexDirection: "row",
         shadowColor: color.neutral[900],
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.08,
-        shadowRadius: 20,
-        elevation: 6,
+        shadowRadius: 24,
+        elevation: 8,
         overflow: "hidden",
     },
     cardPressed: {
