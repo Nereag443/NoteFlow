@@ -54,6 +54,7 @@ export default function RootLayout() {
         <Stack.Screen name="notas/[id]" options={{ title: "Nota" }} />
         <Stack.Screen name="checklists/[id]" options={{ title: "Checklist" }} />
         <Stack.Screen name="ideas/[id]" options={{ title: "Idea" }} />
+        <Stack.Screen name="archived" options={{ title: "Archivados" }} />
       </Stack>
     </PaperProvider>
     </GestureHandlerRootView>

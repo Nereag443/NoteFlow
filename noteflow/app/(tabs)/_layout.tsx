@@ -51,20 +51,19 @@ export default function TabsLayout() {
         },
       ]}
     >
-      <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.surfaceVariant, shadowColor: theme.colors.elevation }]}> 
+      <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.surfaceVariant, shadowColor: theme.colors.elevation }]}>
         <View>
           <Text style={[styles.title, { color: theme.colors.text }]}>NoteFlow</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>Tus notas más claras y ordenadas</Text>
         </View>
-        <Pressable style={[styles.themeToggle, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]} onPress={toggleTheme}>
-          <Ionicons
-            name={isDarkMode ? "moon" : "sunny"}
-            size={20}
-            color={theme.colors.text}
-            style={styles.themeIcon}
-          />
-          <Text style={[styles.themeToggleText, { color: theme.colors.text }]}>{themeMode === "dark" ? "Oscuro" : themeMode === "light" ? "Claro" : "Auto"}</Text>
-        </Pressable>
+        <View style={styles.headerRight}>
+          <Pressable onPress={() => router.push("/archived")} style={[styles.archiveButton, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
+            <Ionicons name="archive-outline" size={20} color={theme.colors.text} />
+          </Pressable>
+          <Pressable style={[styles.themeToggle, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]} onPress={toggleTheme}>
+            <Ionicons name={isDarkMode ? "moon" : "sunny"} size={20} color={theme.colors.text} style={styles.themeIcon} />
+            <Text style={[styles.themeToggleText, { color: theme.colors.text }]}>{themeMode === "dark" ? "Oscuro" : themeMode === "light" ? "Claro" : "Auto"}</Text>
+          </Pressable>
+        </View>
       </View>
       <Tabs
         screenOptions={{
@@ -136,11 +135,6 @@ const styles = StyleSheet.create ({
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
   },
-  subtitle: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    marginTop: 4,
-  },
   themeToggle: {
     flexDirection: "row",
     alignItems: "center",
@@ -177,5 +171,15 @@ const styles = StyleSheet.create ({
     fontSize: 30,
     lineHeight: 34,
     fontWeight: typography.fontWeight.bold,
-  }
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
+  },
+  archiveButton: {
+    padding: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
 })
