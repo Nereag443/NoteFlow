@@ -37,7 +37,7 @@ export interface Checklist extends BaseNote {
 export interface IdeaNote extends BaseNote {
   tags: string[];
   color: string;
-  archived: boolean;
+  archived:boolean;
 }
 
 export type AnyNote = Note | Checklist | IdeaNote;
@@ -61,3 +61,9 @@ export interface Reminder {
   time: Date;
   priority: Priority;
 }
+
+export type ArchiveSection = {
+    title: string;
+    data: AnyNote[];
+    type: "note" | "checklist" | "idea";
+};
