@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Text, Pressable, View } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { z } from "zod";
 import { useNoteStore } from "@/store/notesStore";
 import { color, spacing, radius, typography, useAppTheme } from "@/constants/theme";
-import { NoteType } from "@/types";
+import { NoteType, Priority } from "@/types";
 import TypeSelector from "@/components/forms/TypeSelector";
 import NoteForm from "@/components/forms/NoteForm";
 import ChecklistForm from "@/components/forms/ChecklistForm";
@@ -30,20 +30,27 @@ export default function NewNote() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [tags, setTags] = useState("");
-    const [checklistItems, setChecklistItems] = useState<string[]>([""]);
+    const [checklistItems, setChecklistItems] = useState<string[]>([]);
     const [selectedColor, setSelectedColor] = useState<string>(color.primary[500]);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const addNote = useNoteStore((state) => state.addNote);
     const addChecklist = useNoteStore((state) => state.addChecklist);
     const addIdea = useNoteStore((state) => state.addIdea);
-
+    const navigation = useNavigation();
     const generateId = () => Math.random().toString(36).slice(2);
+    const [priority, setPriority] = useState<Priority>("low");
     const pageTitle =
       type === "note"
         ? "Nueva nota"
         : type === "checklist"
         ? "Nueva lista"
         : "Nueva idea";
+
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        title: pageTitle,
+      })
+    }, [pageTitle]);
 
     const handleSave = () => {
       setErrors({});
@@ -65,6 +72,7 @@ export default function NewNote() {
           content: content || "",
           createdAt: now,
           updatedAt: now,
+          archived: false,
         });
       }
 
@@ -86,6 +94,8 @@ export default function NewNote() {
             })),
           createdAt: now,
           updatedAt: now,
+          priority,
+          archived: false,
         });
       }
 
@@ -106,6 +116,7 @@ export default function NewNote() {
           color: selectedColor,
           createdAt: now,
           updatedAt: now,
+          archived: false,
         });
       }
       router.back();
@@ -121,7 +132,6 @@ export default function NewNote() {
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
         >
-          <Text style={[styles.pageTitle, { color: theme.colors.text }]}>{pageTitle}</Text>
           <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
             <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>Tipo</Text>
             <TypeSelector type={type} onSelectType={setType} />
@@ -143,6 +153,8 @@ export default function NewNote() {
                 onTitleChange={setTitle}
                 onItemsChange={setChecklistItems}
                 errors={errors}
+                priority={priority}
+                onPriorityChange={setPriority}
               />
             )}
             {type === "idea" && (
