@@ -104,18 +104,6 @@ export default function TabsLayout() {
           }}
         />
       ))}
-      <Tabs.Screen
-        name="notas/[id]"
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name="checklists/[id]"
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name="ideas/[id]"
-        options={{ href: null }}
-      />
 
     </Tabs>
     <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]} onPress={() => router.push(`/new-note?type=${getType()}`)}>
@@ -170,7 +158,7 @@ const styles = StyleSheet.create ({
   },
   addButton: {
     position: "absolute",
-    bottom: 86,
+    bottom: 100,
     right: 24,
     width: 58,
     height: 58,

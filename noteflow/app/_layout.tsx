@@ -4,6 +4,7 @@ import { ActivityIndicator, PaperProvider } from "react-native-paper";
 import { View, useColorScheme } from "react-native";
 import { color, lightTheme, darkTheme } from "@/constants/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useEffect } from "react";
 
 export default function RootLayout() {
   const hasHydrated = useNoteStore((state) => state._hasHydrated);
@@ -20,10 +21,34 @@ export default function RootLayout() {
       </View>
     )
   }
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+        const style = document.createElement('style');
+        style.textContent = `
+            * {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+            }
+            input:focus, textarea:focus {
+                outline: 2px solid ${theme.colors.primary} !important;
+                border-radius: 4px !important;
+                padding: 4px !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+  }), [theme.colors.primary];
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <PaperProvider theme={theme}>
-      <Stack>
+      <Stack screenOptions={{
+        headerStyle: { backgroundColor: theme.colors.surface },
+        headerTintColor: theme.colors.text,
+        headerTitleStyle: { color: theme.colors.text },
+        headerShadowVisible: false,
+      }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="new-note" options={{ presentation: "modal", title: "Nueva nota "}} />
         <Stack.Screen name="notas/[id]" options={{ title: "Nota" }} />
