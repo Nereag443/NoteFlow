@@ -1,6 +1,7 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { useState } from 'react';
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
+import { Priority } from '@/types';
 
 interface ChecklistFormProps {
     title: string;
@@ -10,9 +11,11 @@ interface ChecklistFormProps {
     errors: Record<string, string>;
     selectedColor?: string;
     onColorChange?: (color: string) => void;
+    priority: Priority;
+    onPriorityChange: (priority: Priority) => void;
 }
 
-export default function ChecklistForm({ title, items, onTitleChange, onItemsChange, errors }: ChecklistFormProps) {
+export default function ChecklistForm({ title, items, onTitleChange, onItemsChange, errors, priority, onPriorityChange }: ChecklistFormProps) {
     const theme = useAppTheme();
     const [itemInput, setItemInput] = useState("");
     const addItem = () => {
@@ -24,6 +27,12 @@ export default function ChecklistForm({ title, items, onTitleChange, onItemsChan
     const removeItem = (index: number) => {
         onItemsChange(items.filter((_, i) => i !== index));
     };
+
+    const priorityLabel = {
+        low: "Baja",
+        medium: "Media",
+        high: "Alta",
+    }
 
     return (
         <View>
@@ -70,6 +79,30 @@ export default function ChecklistForm({ title, items, onTitleChange, onItemsChan
                             <Text style={styles.deleteButtonText}>Eliminar</Text>
                         </Pressable>
                     </View>
+                ))}
+            </View>
+            <Text style={[styles.label, { color: theme.colors.textMuted }]}>Prioridad</Text>
+            <View style={styles.priorityContainer}>
+                {(["low", "medium", "high"] as Priority[]).map((level) => (
+                    <Pressable 
+                        key={level}
+                        onPress={() => onPriorityChange(level)}
+                        style={[
+                            styles.priorityButton,
+                            { backgroundColor: priority === level 
+                                ? color.priority[level] : theme.colors.surface,
+                                borderColor: color.priority[level],
+                            },
+                        ]}
+                        >
+                            <Text style={{ color: priority === level 
+                                ?color.neutral[0] : theme.colors.text,
+                                fontWeight: "600",
+                                fontSize: 12,
+                                textTransform: "capitalize",
+                            }}
+                            >{priorityLabel[level]}</Text>
+                        </Pressable>
                 ))}
             </View>
             <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]} onPress={addItem}>
@@ -139,5 +172,17 @@ const styles = StyleSheet.create({
         color: color.neutral[0],
         fontSize: typography.fontSize.md,
         fontWeight: typography.fontWeight.semibold,
+    },
+    priorityContainer: {
+        flexDirection: "row",
+        gap: spacing[2],
+        paddingBottom: spacing[4],
+    },
+    priorityButton: {
+        flex: 1,
+        paddingVertical: spacing[2],
+        borderRadius: radius.md,
+        borderWidth: 1,
+        alignItems: "center",
     },
 });
