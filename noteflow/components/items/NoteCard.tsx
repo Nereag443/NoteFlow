@@ -1,15 +1,29 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Note } from '@/types';
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
-import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeOutLeft, useAnimatedStyle, interpolate, SharedValue } from "react-native-reanimated";
 import { Ionicons } from '@expo/vector-icons';
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 
 interface NoteCardProps {
   note: Note;
   onPress: () => void;
+  onArchive: () => void;
 }
 
-export default function NoteCard({ note, onPress }: NoteCardProps) {
+function LeftAction({ dragX }: { dragX: SharedValue<number> }) { 
+    const animatedStyle = useAnimatedStyle(() => ({ 
+        width: Math.max(0, -dragX.value), 
+        opacity: interpolate(-dragX.value, [0, 80], [0, 1]), 
+}));
+    return ( 
+        <Animated.View style={[styles.leftAction, animatedStyle]}> 
+            <Ionicons name="archive" size={28} color={color.neutral[0]} /> 
+        </Animated.View> 
+    ); 
+}
+
+export default function NoteCard({ note, onPress, onArchive }: NoteCardProps) {
     const preview = note.content.length > 100 ? note.content.slice(0, 100) + '...' : note.content;
     const date = new Date(note.createdAt).toLocaleDateString("es-ES", {
         day: '2-digit',
@@ -18,7 +32,16 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
     });
 
     const theme = useAppTheme();
+    const renderLeftActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
+            <LeftAction dragX={dragX} /> 
+        );
     return (
+        <ReanimatedSwipeable
+            renderLeftActions={renderLeftActions}
+            onSwipeableOpen={(direction) => {
+                if (direction === "left") onArchive();
+            }}
+        >
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft} style={styles.wrapper}>
         <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderWidth: 1 }]} onPress={onPress}>
             <View style={[styles.accent, { backgroundColor: theme.colors.primary }]} />
@@ -39,6 +62,7 @@ export default function NoteCard({ note, onPress }: NoteCardProps) {
             </View>
         </Pressable>
         </Animated.View>
+        </ReanimatedSwipeable>
     );
 }
 
@@ -62,7 +86,7 @@ const styles = StyleSheet.create({
         transform: [{ scale: 0.985 }],
     },
     accent: {
-        width: 4,
+        width: 6,
         backgroundColor: color.primary[500],
     },
     content: {
@@ -101,5 +125,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    leftAction: {
+        width: 80,
+        backgroundColor: color.neutral[600], 
+        justifyContent: "center", 
+        alignItems: "center", 
+        height: "100%", 
+        borderRadius: radius.xl, 
+        marginVertical: spacing[2], 
     },
 });
