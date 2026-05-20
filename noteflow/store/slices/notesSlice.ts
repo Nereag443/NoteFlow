@@ -7,6 +7,7 @@ export interface NotesSlice {
   updateNote: (id: string, data: Partial<Note>) => void;
   deleteNote: (id: string) => void;
   archiveNote: (id: string) => void;
+  unarchiveNote: (id: string) => void;
 }
 
 export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
@@ -27,5 +28,11 @@ export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
       notes: state.notes.map((n) =>
         n.id === id ? { ...n, archived: true, updatedAt: new Date() } : n
       ),
-    }))
+    })),
+    unarchiveNote: (id) =>
+    set((state) => ({
+        notes: state.notes.map((n) =>
+            n.id === id ? { ...n, archived: false, updatedAt: new Date() } : n
+        ),
+    })),
 });

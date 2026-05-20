@@ -7,7 +7,7 @@ export interface IdeasSlice {
   setIdeas: (ideas: IdeaNote[]) => void;
   deleteIdea: (id: string) => void;
   archiveIdea: (id: string) => void;
-  archivedIdeas: IdeaNote[];
+  unarchiveIdea: (id: string) =>void
 }
 
 export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
@@ -23,5 +23,11 @@ export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
       ideas: state.ideas.map((i) =>
         i.id === id ? { ...i, archived: true, updatedAt: new Date() } : i
       )
+    })),
+    unarchiveIdea: (id) =>
+    set((state) => ({
+        ideas: state.ideas.map((i) =>
+            i.id === id ? { ...i, archived: false, updatedAt: new Date() } : i
+        ),
     })),
 });

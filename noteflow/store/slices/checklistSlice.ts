@@ -12,6 +12,7 @@ export interface ChecklistSlice {
   deleteChecklistItem: (checklistId: string, itemId: string) => void;
   updateChecklistPriority: (checklistId: string, priority: Priority) => void;
   archiveChecklist: (id: string) => void;
+  unarchiveChecklist: (id: string) => void;
 }
 
 export const createChecklistSlice: StateCreator<ChecklistSlice> = (set) => ({
@@ -87,4 +88,10 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set) => ({
             c.id === id ? { ...c, archived: true, updatedAt: new Date() } : c
           ),
         })),
+      unarchiveChecklist: (id) =>
+        set((state) => ({
+        checklists: state.checklists.map((c) =>
+            c.id === id ? { ...c, archived: false, updatedAt: new Date() } : c
+        ),
+    })),
 });
