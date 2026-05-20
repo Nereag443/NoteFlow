@@ -2,14 +2,12 @@ import { useLocalSearchParams, Stack, router } from "expo-router";
 import { View, Text, StyleSheet, Pressable, Alert, Platform } from "react-native";
 import { useNoteStore } from "@/store/notesStore";
 import { color, spacing, radius, typography, useAppTheme } from "@/constants/theme";
-import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function IdeaDetail() {
     const theme = useAppTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
     const idea = useNoteStore((state) => state.ideas.find((i) => i.id === id));
-    const deleteIdea = useNoteStore((state) => state.deleteIdea);
     const archiveIdea = useNoteStore((state) => state.archiveIdea);
     if (!idea) {
     return (
@@ -18,35 +16,6 @@ export default function IdeaDetail() {
         </View>
     );
     }
-
-    const handleDelete = () => {
-        if (Platform.OS === 'web') {
-            const confirmed = window.confirm("¿Estás seguro de que quieres eliminar esta idea?");
-            if(confirmed) {
-                deleteIdea(idea.id);
-                router.back();
-            }
-        } else {
-        Alert.alert(
-                "Eliminar idea",
-                "¿Estás seguro de que quieres eliminar esta idea?",
-                [
-                    {
-                        text: "Cancelar", style: "cancel"
-                    },
-                    {
-                        text: "Eliminar",
-                        style: "destructive",
-                        onPress: () => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            deleteIdea(idea.id);
-                            router.back();
-                        }
-                    }
-                ]
-            )
-        }
-    };
     
     return (
         <>
@@ -69,9 +38,6 @@ export default function IdeaDetail() {
             <Text style={[styles.date, { color: theme.colors.textMuted }]}> 
                 {new Date(idea.updatedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
             </Text>
-            <Pressable style={[styles.deleteButton, { backgroundColor: theme.colors.surface }]} onPress={handleDelete}>
-                <Text style={[styles.deleteButtonText, { color: color.semantic.error }]}>Eliminar</Text>
-            </Pressable>
           </View>
         </View>
         </>
@@ -121,17 +87,6 @@ const styles = StyleSheet.create({
         fontSize: typography.fontSize.sm,
         color: color.neutral[600],
         marginBottom: spacing[8],
-    },
-    deleteButton: {
-        backgroundColor: "rgba(0,0,0,0.1)",
-        padding: spacing[3],
-        borderRadius: radius.md,
-        alignItems: "center",
-    },
-    deleteButtonText: {
-        color: color.semantic.error,
-        fontSize: typography.fontSize.md,
-        fontWeight: typography.fontWeight.semibold,
     },
     archiveButton: {
         padding: spacing[3],

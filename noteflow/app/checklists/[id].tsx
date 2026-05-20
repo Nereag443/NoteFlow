@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable, Alert, Platform, TextInput } from "react-native";
-import { useLocalSearchParams, router, Stack } from "expo-router";
+import { useLocalSearchParams, Stack } from "expo-router";
 import { useNoteStore } from "@/store/notesStore";
 import { color, typography, spacing, radius, useAppTheme } from "@/constants/theme";
 import * as Haptics from "expo-haptics";
@@ -12,7 +12,6 @@ export default function ChecklistDetail() {
     const checklist = useNoteStore((state) => state.checklists.find((c) => c.id ===id));
     const theme = useAppTheme();
     const toggleItem = useNoteStore((state) => state.toggleChecklistItem);
-    const deleteChecklist = useNoteStore((state) => state.deleteChecklist);
     const addChecklistItem = useNoteStore((state) => state.addChecklistItem);
     const [newItem, setNewItem] = useState("");
     const updateChecklistTitle = useNoteStore((state) => state.updateChecklistTitle);
@@ -36,35 +35,6 @@ export default function ChecklistDetail() {
             </View>
         );
     }
-
-    const handleDelete = () => {
-      if (Platform.OS === 'web') {
-        const confirmed = window.confirm("¿Estás seguro de que quieres eliminar esta lista?");
-        if (confirmed) {
-          deleteChecklist(checklist.id);
-          router.back();
-        }
-      } else {
-        Alert.alert(
-                "Eliminar lista",
-                "¿Estás seguro de que quieres eliminar esta lista?",
-                [
-                    {
-                        text: "Cancelar", style: "cancel"
-                    },
-                    {
-                        text: "Eliminar",
-                        style: "destructive",
-                        onPress: () => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            deleteChecklist(checklist.id);
-                            router.back();
-                        }
-                    }
-                ]
-            )
-      }
-    };
 
     const completed = checklist.items.filter((i) => i.isCompleted).length;
     const total = checklist.items.length;
@@ -198,10 +168,6 @@ export default function ChecklistDetail() {
                   <Text style={[styles.addBtnText, { color: theme.colors.onPrimary }]}>Agregar tarea</Text>
                 </Pressable>
                 </View>
-
-                <Pressable style={[styles.deleteBtn, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]} onPress={handleDelete}>
-                <Text style={[styles.deleteBtnText, { color: color.semantic.error }]}>Eliminar lista</Text>
-                </Pressable>
             </View>
         </>
     );
@@ -267,18 +233,6 @@ const styles = StyleSheet.create({
     color: color.neutral[900],
     fontWeight: typography.fontWeight.semibold,
     lineHeight: 24,
-  },
-  deleteBtn: {
-    marginTop: spacing[2],
-    padding: spacing[3],
-    borderRadius: radius.md,
-    backgroundColor: color.neutral[100],
-    alignItems: "center",
-  },
-  deleteBtnText: {
-    fontSize: typography.fontSize.md,
-    color: color.semantic.error,
-    fontWeight: typography.fontWeight.semibold,
   },
   notFound: {
     flex: 1,

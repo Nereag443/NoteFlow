@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Platform, TextInp
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { useNoteStore } from "@/store/notesStore";
 import { color, typography, spacing, radius, useAppTheme } from "@/constants/theme";
-import * as Haptics from "expo-haptics";
 import { useState } from "react";
 
 export default function ChecklistDetail() {
@@ -11,7 +10,6 @@ export default function ChecklistDetail() {
     const note = useNoteStore((state) =>
         state.notes.find((n) => n.id === id)
     );
-    const deleteNote = useNoteStore((state) => state.deleteNote)
     if(!note) {
         return (
             <View style={[styles.notFound, { backgroundColor: theme.colors.background }]}> 
@@ -21,43 +19,17 @@ export default function ChecklistDetail() {
             </View>
         );
     }
-    const handleDelete = () => {
-        if (Platform.OS === 'web') {
-            const confirmed = window.confirm("¿Estás seguro de que quieres eliminar esta nota?");
-            if (confirmed) {
-                deleteNote(note.id);
-                router.back();
-            }
-        } else {
-    Alert.alert(
-        "Eliminar nota",
-        "¿Estás seguro de que quieres eliminar esta nota?",
-        [
-            {
-                text: "Cancelar", style: "cancel"
-            },
-            {
-                text: "Eliminar",
-                style: "destructive",
-                onPress: () => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    deleteNote(note.id);
-                    router.back();
-                }
-            }
-        ]
-    )
-}
-}
     const updateNote = useNoteStore((state) => state.updateNote);
     const [editingTitle, setEditingTitle] = useState(false);
     const [titleValue, setTitleValue] = useState(note?.title ?? "");
     const [contentValue, setContentValue] = useState(note?.content ?? "");
+    const LINES = 40;
 
     return (
         <>
             <Stack.Screen options={{ title: editingTitle ? "Editando..." : note.title }} />
             <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+                <View style={styles.contentContainer}>
                 {editingTitle ? (
                     <TextInput
                         style={[styles.titleInput, { color: theme.colors.text, borderColor: theme.colors.border }]}
@@ -76,7 +48,9 @@ export default function ChecklistDetail() {
                     />
                 ) : (
                         <Pressable onPress={() => setEditingTitle(true)}>
+                            <View style={[styles.titleWrapper, { borderColor: theme.colors.border }]}>
                             <Text style={[styles.title, { color: theme.colors.text }]}>{note.title}</Text>
+                            </View>
                         </Pressable>
                 )}
                 <Text style={[styles.date, { color: theme.colors.textMuted }]}> 
@@ -96,10 +70,9 @@ export default function ChecklistDetail() {
                     multiline
                     placeholder="Escribe aquí..."
                     placeholderTextColor={theme.colors.textMuted}
+                    textAlignVertical="top"
                 />
-                <Pressable style={[styles.deleteButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]} onPress={handleDelete}>
-                    <Text style={[styles.deleteButtonText, { color: color.semantic.error }]}>Eliminar nota</Text>
-                </Pressable>
+                </View>
             </ScrollView>
         </>
     );
@@ -108,7 +81,6 @@ export default function ChecklistDetail() {
 const styles = StyleSheet.create ({
     container: {
         flex: 1,
-        padding: spacing[4],
     },
     date: {
         fontSize: typography.fontSize.sm,
@@ -116,20 +88,17 @@ const styles = StyleSheet.create ({
     },
     content: {
         fontSize: typography.fontSize.md,
-        lineHeight: 24,
-        marginBottom: spacing[8],
-    },
-    deleteButton: {
-        padding: spacing[3],
-        borderRadius: radius.md,
-        backgroundColor: color.neutral[100],
-        alignItems: "center",
-        marginBottom: spacing[8],
-    },
-    deleteButtonText: {
-        fontSize: typography.fontSize.md,
-        color: color.semantic.error,
-        fontWeight: typography.fontWeight.semibold,
+        lineHeight: 28,
+        minHeight: 500,
+        padding: spacing[4],
+        backgroundColor: "#fffdf7",
+        borderRadius: radius.xl,
+        borderLeftWidth: 1,
+        borderColor: "rgba(0,0,0,0.05)",
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
     },
     notFound: {
         flex: 1,
@@ -155,5 +124,13 @@ const styles = StyleSheet.create ({
     editHint: {
         fontSize: typography.fontSize.xs,
         marginBottom: spacing[4],
+    },
+    titleWrapper: {
+        borderBottomWidth: 1,
+        paddingBottom: spacing[1],
+        marginBottom: spacing[1],
+    },
+    contentContainer: {
+        padding: spacing[4],
     },
 })
