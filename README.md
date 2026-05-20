@@ -76,11 +76,30 @@ npm install
 ```
 
 ## Cómo usar el proyecto
-Iniciar el proyecto (Asegurarse de estar en `noteflow/`)
-```bash
-npx expo start
+Asegurarse de estar en `noteflow/` antes de ejecutar cualquier comando.
+
+### Ver en móvil (URL manual)
+
+1. Inicia el proyecto: `npx expo start`
+2. Ejecuta `ipconfig` y copia tu IP WIFI (ej. `192.168.1.XX`)
+3. Abre Expo Go y escribe: `exp://192.168.1.XX:8081`
+
+### Ver en móvil (QR)
+
+1. Ejecuta `ipconfig` y copia tu IP WIFI
+2. Ejecuta en PowerShell:
+
+```powershell
+$env:REACT_NATIVE_PACKAGER_HOSTNAME="192.168.1.XX"; npx expo start
 ```
-Escanea el código QR que aparece en la terminal con Expo Go en tu móvil.
+
+3. Escanea el código QR que aparece en la terminal con Expo Go en tu móvil.
+
+### Ver en web
+
+```powershell
+npx expo start --web
+```
 
 ## Funcionalidades principales
  - Creación de notas
