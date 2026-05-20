@@ -7,7 +7,7 @@ export const color = {
     50:  "#e8f1ff",
     100: "#cce0ff",
     300: "#7db8ff",
-    500: "#6366f1",
+    500: "#4d7bdf",
     700: "#1a5fd4",
     900: "#0a3490",
   },
@@ -26,6 +26,11 @@ export const color = {
     error:   "#fa5252",
     info:    "#228be6",
   },
+  priority: {
+    low: "#67abe7",
+    medium: "#ffd65d",
+    high: "#ff6b6b",
+  }
 } as const;
 
 export const typography = {
