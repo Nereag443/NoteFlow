@@ -19,12 +19,9 @@ export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
   deleteIdea: (id) =>
     set((state) => ({ ideas: state.ideas.filter((i) => i.id !== id) })),
   archiveIdea: (id) =>
-    set((state) => {
-      const idea = state.ideas.find((i) => i.id === id);
-      if (!idea) return state;
-      return {
-        ideas: state.ideas.filter((i) => i.id !== id),
-        archivedIdeas: [...state.archivedIdeas, idea],
-      };
-    }),
+    set((state) => ({
+      ideas: state.ideas.map((i) =>
+        i.id === id ? { ...i, archived: true, updatedAt: new Date() } : i
+      )
+    })),
 });
