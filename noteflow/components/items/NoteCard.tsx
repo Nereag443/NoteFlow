@@ -32,12 +32,12 @@ export default function NoteCard({ note, onPress, onArchive }: NoteCardProps) {
     });
 
     const theme = useAppTheme();
-    const renderLeftActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
+    const renderRightActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
             <LeftAction dragX={dragX} /> 
         );
     return (
         <ReanimatedSwipeable
-            renderLeftActions={renderLeftActions}
+            renderRightActions={renderRightActions}
             onSwipeableOpen={(direction) => {
                 if (direction === "left") onArchive();
             }}
@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     leftAction: {
-        width: 80,
         backgroundColor: color.neutral[600], 
         justifyContent: "center", 
         alignItems: "center", 
         height: "100%", 
         borderRadius: radius.xl, 
         marginVertical: spacing[2], 
+        minWidth: 80,
     },
 });

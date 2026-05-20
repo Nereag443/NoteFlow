@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Checklist, Priority } from "@/types";
+import { Checklist } from "@/types";
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme'
 import Animated, { FadeInDown, FadeOutLeft, useAnimatedStyle, interpolate, SharedValue } from "react-native-reanimated";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -33,14 +33,14 @@ export default function ChecklistCard({ checklist, onPress, onArchive }: Checkli
         month: "short",
         year: "numeric",
     })
-    const renderLeftActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
+    const renderRightActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
         <LeftAction dragX={dragX} /> 
     );
     const priority = checklist.priority ?? "low";
     const priorityColor = color.priority[priority];
     return (
         <ReanimatedSwipeable
-            renderLeftActions={renderLeftActions}
+            renderRightActions={renderRightActions}
             onSwipeableOpen={(direction) => {
                 if (direction === "left") onArchive();
             }}
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
         height: "100%", 
         borderRadius: radius.xl, 
         marginVertical: spacing[2], 
+        minWidth: 80,
     },
     priorityBar: {
         position: "absolute",
