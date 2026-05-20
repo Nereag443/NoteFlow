@@ -12,9 +12,12 @@ import { typography, spacing, useAppTheme } from "@/constants/theme";
 export default function NotasScreen() {
     const notes = useNoteStore((state) => state.notes);
     const [search, setSearch] = useState("");
-    const filtered = notes.filter((n) =>
-        n.title.toLowerCase().includes(search.toLowerCase()) ||
-        n.content.toLowerCase().includes(search.toLowerCase()));
+    const archiveNote = useNoteStore((state) => state.archiveNote);
+    const filtered = notes
+        .filter((n) => !n.archived)
+        .filter((n) =>
+            n.title.toLowerCase().includes(search.toLowerCase()) ||
+            n.content.toLowerCase().includes(search.toLowerCase()));
     const theme = useAppTheme();
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
@@ -47,6 +50,7 @@ export default function NotasScreen() {
                     <NoteCard
                         note={item}
                         onPress={() => router.push(`/notas/${item.id}`)}
+                        onArchive={() => archiveNote(item.id)}
                     />
                 )}
                 keyExtractor={(item) => item.id}

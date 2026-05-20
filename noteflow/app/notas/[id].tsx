@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Platform } from "react-native";
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Platform, TextInput } from "react-native";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { useNoteStore } from "@/store/notesStore";
 import { color, typography, spacing, radius, useAppTheme } from "@/constants/theme";
 import * as Haptics from "expo-haptics";
+import { useState } from "react";
 
 export default function ChecklistDetail() {
     const theme = useAppTheme();
@@ -48,20 +49,54 @@ export default function ChecklistDetail() {
     )
 }
 }
+    const updateNote = useNoteStore((state) => state.updateNote);
+    const [editingTitle, setEditingTitle] = useState(false);
+    const [titleValue, setTitleValue] = useState(note?.title ?? "");
+    const [contentValue, setContentValue] = useState(note?.content ?? "");
+
     return (
         <>
-            <Stack.Screen options={{ title: note.title }} />
+            <Stack.Screen options={{ title: editingTitle ? "Editando..." : note.title }} />
             <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}> 
+                {editingTitle ? (
+                    <TextInput
+                        style={[styles.titleInput, { color: theme.colors.text, borderColor: theme.colors.border }]}
+                        value={titleValue}
+                        onChangeText={setTitleValue}
+                        autoFocus
+                        returnKeyType="done"
+                        onBlur={() => {
+                            updateNote(note.id, { title: titleValue.trim() || note.title });
+                            setEditingTitle(false);
+                        }}
+                        onSubmitEditing={() => {
+                            updateNote(note.id, { title: titleValue.trim() || note.title });
+                            setEditingTitle(false);
+                        }}
+                    />
+                ) : (
+                        <Pressable onPress={() => setEditingTitle(true)}>
+                            <Text style={[styles.title, { color: theme.colors.text }]}>{note.title}</Text>
+                        </Pressable>
+                )}
                 <Text style={[styles.date, { color: theme.colors.textMuted }]}> 
                 {new Date(note.updatedAt).toLocaleDateString("es-ES", {
                     day: "numeric",
                     month: "long",
                     year: "numeric"
-                })}
+                })} · Pulsa el título para editar
                 </Text>
-                <Text style={[styles.content, { color: theme.colors.text }]}> 
-                    {note.content}
-                </Text>
+                <TextInput
+                    style={[styles.content, { color: theme.colors.text }]}
+                    value={contentValue}
+                    onChangeText={(text) => {
+                        setContentValue(text);
+                        updateNote(note.id, { content: text });
+                    }}
+                    multiline
+                    placeholder="Escribe aquí..."
+                    placeholderTextColor={theme.colors.textMuted}
+                />
                 <Pressable style={[styles.deleteButton, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]} onPress={handleDelete}>
                     <Text style={[styles.deleteButtonText, { color: color.semantic.error }]}>Eliminar nota</Text>
                 </Pressable>
@@ -104,5 +139,21 @@ const styles = StyleSheet.create ({
     notFoundText: {
         fontSize: typography.fontSize.lg,
         color: color.neutral[400],
+    },
+    title: {
+        fontSize: typography.fontSize["2xl"],
+        fontWeight: typography.fontWeight.bold,
+        marginBottom: spacing[1],
+    },
+    titleInput: {
+        fontSize: typography.fontSize["2xl"],
+        fontWeight: typography.fontWeight.bold,
+        borderBottomWidth: 1,
+        marginBottom: spacing[1],
+        paddingVertical: spacing[1],
+    },
+    editHint: {
+        fontSize: typography.fontSize.xs,
+        marginBottom: spacing[4],
     },
 })

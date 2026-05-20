@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, Pressable, Alert, Platform } from "react-native
 import { useNoteStore } from "@/store/notesStore";
 import { color, spacing, radius, typography, useAppTheme } from "@/constants/theme";
 import * as Haptics from "expo-haptics";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function IdeaDetail() {
     const theme = useAppTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
     const idea = useNoteStore((state) => state.ideas.find((i) => i.id === id));
     const deleteIdea = useNoteStore((state) => state.deleteIdea);
+    const archiveIdea = useNoteStore((state) => state.archiveIdea);
     if (!idea) {
     return (
         <View style={styles.notFound}>
@@ -51,7 +53,12 @@ export default function IdeaDetail() {
         <Stack.Screen options={{ title: idea.title }} />
         <View style={[styles.page, { backgroundColor: theme.colors.background }]}> 
           <View style={[styles.container, { backgroundColor: idea.color }]}> 
+            <View style={styles.titleRow}>
             <Text style={[styles.title, { color: theme.colors.text }]}>{idea.title}</Text>
+            <Pressable onPress={() => { archiveIdea(idea.id); router.back(); }}>
+                <Ionicons name="archive-outline" size={22} color={theme.colors.textMuted} />
+            </Pressable>
+            </View>
             <View style={styles.tags}>
                 {idea.tags.map((tag) => (
                     <View key={tag} style={[styles.chip, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}> 
@@ -125,5 +132,22 @@ const styles = StyleSheet.create({
         color: color.semantic.error,
         fontSize: typography.fontSize.md,
         fontWeight: typography.fontWeight.semibold,
+    },
+    archiveButton: {
+        padding: spacing[3],
+        borderRadius: radius.md,
+        alignItems: "center",
+        borderWidth: 1,
+        marginBottom: spacing[2],
+    },
+    archiveButtonText: {
+        fontSize: typography.fontSize.md,
+        fontWeight: typography.fontWeight.semibold,
+    },
+    titleRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: spacing[4],
     },
 });

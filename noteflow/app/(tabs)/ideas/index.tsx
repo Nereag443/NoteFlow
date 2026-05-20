@@ -18,7 +18,9 @@ export default function IdeasScreen() {
     const ideas = useNoteStore((state) => state.ideas);
     const addIdea = useNoteStore((state) => state.addIdea);
     const [search, setSearch] = useState("");
-    const filtered = ideas.filter((i) =>
+    const filtered = ideas
+        .filter((i) => !i.archived)
+        .filter((i) =>
         i.title.toLowerCase().includes(search.toLowerCase()) ||
         i.tags.some((tag) => tag.toLowerCase().includes(search.toLowerCase())));
 
