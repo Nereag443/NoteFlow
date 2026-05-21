@@ -8,6 +8,10 @@ NoteFlow es una aplicación móvil de gestión de notas desarrollada con React N
  - [Expo Router](https://docs.expo.dev/router/introduction/) (Navegación basada en archivos)
  - [Zustand](https://github.com/pmndrs/zustand) (Gestión de estado global)
  - [React Native Reanimated](https://www.reanimated2.com/) (Animaciones fluidas)
+ - [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/) (Swipe)
+ - [React Native Paper](https://callstack.github.io/react-native-paper/) (Componentes UI)
+ - [Expo Linear gradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/) (Degradados)
+ - [expo-haptics](https://docs.expo.dev/versions/latest/sdk/haptics/) (Vibración tactil)
  - [Zod](https://zod.dev/) (Validación de datos)
  - [TypeScript](https://www.typescriptlang.org/)
 
@@ -25,23 +29,28 @@ noteflow/
 │   │    │    └── index.tsx     # Lista de notas
 │   │    └── _layout.tsx        # Layout principal de tabs
 │   ├── checklists/
-│   │   └── [id].tsx            # Detalle de checklist
+│   │   └── [id].tsx            # Detalle y edición de checklist
 │   ├── ideas/
 │   │   └── [id].tsx            # Detalle de idea
 │   ├── notas/
-│   │   └── [id].tsx            # Detalle de nota
+│   │   └── [id].tsx            # Detalle y edición de nota
 │   ├── _layout.tsx             # Layout raíz
-│   └── new-note.tsx            # Crear nueva nota
+│   ├── archived.tsx            # Pantalla de elementos archivados
+│   ├── index.tsx               # Redirección a pantalla principal
+│   └── new-note.tsx            # Crear nueva nota, checklist o idea
 ├── assets/                     # Imágenes y recursos estáticos
 ├── components/                 # Componentes reutilizables
-│   ├── forms/                  # Formularios
+│   ├── forms/                  # Formularios de creación
 │   │   ├── ChecklistForm.tsx
 │   │   ├── IdeaForm.tsx
 │   │   ├── NoteForm.tsx
 │   │   └── TypeSelector.tsx
-│   └── items/                  # Componentes de lista
-│       ├── EmptyState.tsx
-│       └── SearchBar.tsx
+│   ├── items/                  # Tarjetas de lista
+│   │    ├── ChecklistCard.tsx
+│   │    ├── IdeaCard.tsx
+│   │    └── NoteCard.tsx
+│   ├── EmptyState.tsx          # Estado vacío reutilizable
+│   └── SearchBar.tsx           # Barra de búsqueda
 ├── constants/                  # Constantes y configuración
 │   └── theme.ts                # Tema visual
 ├── store/                      # Estado global (Zustand)
@@ -102,24 +111,28 @@ npx expo start --web
 ```
 
 ## Funcionalidades principales
- - Creación de notas
- - Edición y eliminación de notas
- - Gestión de checklists
- - Organización de ideas
- - Búsqueda de contenido
- - Persistencia de datos
- - Navegación optimizada con Expo Router
+
+- **Tres tipos de contenido**: notas de texto, checklists con progreso e ideas con etiquetas y color
+- **Edición inline**: edita el título y contenido directamente en la pantalla de detalle
+- **Prioridades**: asigna prioridad alta, media o baja a las checklists con indicador visual de color
+- **Filtros**: filtra checklists por prioridad y busca por título o etiquetas
+- **Archivar**: desliza a la izquierda para archivar notas y checklists; accede a los archivados desde el icono del header
+- **Modo oscuro/claro/sistema**: cambia el tema desde el botón en el header
+- **Animaciones**: transiciones fluidas con React Native Reanimated
+- **Haptics**: respuesta táctil al completar acciones en móvil
+- **Soporte web**: la app funciona también en navegador
+- **Persistencia de datos**: los datos se guardan localmente con Zustand
 
 ## Ejemplos de uso
 
 **Crear una nota nueva**  
 Pulsa el botón + en la pantalla principal, escribe el título y el contenido, y guarda.
 
-**Editar una nota existente**  
-Pulsa sobre cualquier nota en la lista para abrirla y editarla directamente.
+**Editar una nota**
+Pulsa sobre cualquier nota para abrirla. Pulsa el título para editarlo directamente. El contenido es editable en el mismo campo de texto.
 
-**Eliminar una nota**  
-Desliza la nota hacia la izquierda o mantén pulsado para acceder a la opción de eliminar.
+**Archivar una nota**  
+Desliza la nota hacia la izquierda para archivarla.
 
 ## API
 
