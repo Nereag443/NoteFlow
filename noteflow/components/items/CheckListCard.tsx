@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
 import { Checklist } from "@/types";
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme'
 import Animated, { FadeInDown, FadeOutLeft, useAnimatedStyle, interpolate, SharedValue } from "react-native-reanimated";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import { Ionicons } from "@expo/vector-icons";
+import { useRef, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface ChecklistCardProps {
     checklist: Checklist;
@@ -11,13 +13,21 @@ interface ChecklistCardProps {
     onArchive: () => void;
 }
 
-function LeftAction({ dragX }: { dragX: SharedValue<number> }) { 
+const SCREEN_WIDTH = Dimensions.get("window").width;
+
+function RightAction({ dragX }: { dragX: SharedValue<number> }) { 
     const animatedStyle = useAnimatedStyle(() => ({ 
-        width: Math.max(0, -dragX.value), 
-        opacity: interpolate(-dragX.value, [0, 80], [0, 1]), 
+        width: Math.min(SCREEN_WIDTH, Math.max(0, -dragX.value)),
+        opacity: interpolate(-dragX.value, [0, 80], [0.5, 1]), 
 }));
     return ( 
-        <Animated.View style={[styles.leftAction, animatedStyle]}> 
+        <Animated.View style={[styles.rightAction, animatedStyle]}> 
+            <LinearGradient
+                colors={['transparent', color.neutral[600]]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={StyleSheet.absoluteFill}
+            />
             <Ionicons name="archive" size={28} color={color.neutral[0]} /> 
         </Animated.View> 
     ); 
@@ -25,8 +35,8 @@ function LeftAction({ dragX }: { dragX: SharedValue<number> }) {
 
 export default function ChecklistCard({ checklist, onPress, onArchive }: ChecklistCardProps) {
     const theme = useAppTheme();
-    const total = checklist.items.length;
-    const completed = checklist.items.filter((i) => i.isCompleted).length;
+    const total = (checklist.items ?? []).length;
+    const completed = (checklist.items ?? []).filter((i) => i.isCompleted).length;
     const progress = total > 0 ? completed /total : 0;
     const date = new Date(checklist.updatedAt).toLocaleDateString("es-ES", {
         day: "numeric",
@@ -34,19 +44,34 @@ export default function ChecklistCard({ checklist, onPress, onArchive }: Checkli
         year: "numeric",
     })
     const renderRightActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
-        <LeftAction dragX={dragX} /> 
+        <RightAction dragX={dragX} /> 
     );
     const priority = checklist.priority ?? "low";
     const priorityColor = color.priority[priority];
+    const swipeableRef = useRef<any>(null);
+    const [isArchiving, setIsArchiving] = useState(false);
+    const handleArchive = () => {
+        setIsArchiving(true);
+            setTimeout(() => {
+                onArchive();
+            }, 300);
+        };
+    if(isArchiving) {
+        return null;
+    }
     return (
         <ReanimatedSwipeable
+            ref={swipeableRef}
             renderRightActions={renderRightActions}
             onSwipeableOpen={(direction) => {
-                if (direction === "left") onArchive();
-            }}
+                if (direction === "left") { 
+                    handleArchive();
+                }
+            }
+        }
         >
-        <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
-        <Pressable style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]} onPress={onPress}>
+        <Animated.View entering={FadeInDown} exiting={FadeOutLeft.duration(250)}>
+        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]} onPress={onPress}>
             <View style={[styles.priorityBar, { backgroundColor: priorityColor }]} />
             <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{checklist.title}</Text>
             <Text style={[styles.counter, { color: theme.colors.textMuted }]}>{completed}/{total} tareas completadas</Text>
@@ -97,13 +122,12 @@ const styles = StyleSheet.create({
         fontSize: typography.fontSize.xs,
         color: color.neutral[400],
     },
-    leftAction: {
-        width: 80,
-        backgroundColor: color.neutral[600], 
+    rightAction: {
         justifyContent: "center", 
         alignItems: "center", 
         height: "100%", 
-        borderRadius: radius.xl, 
+        borderTopRightRadius: radius.xl,
+        borderBottomRightRadius: radius.xl,
         marginVertical: spacing[2], 
         minWidth: 80,
     },
@@ -115,5 +139,9 @@ const styles = StyleSheet.create({
         width: 6,
         borderTopLeftRadius: radius.xl,
         borderBottomLeftRadius: radius.xl,
-    }
+    },
+    cardPressed: {
+        opacity: 0.96,
+        transform: [{ scale: 0.985 }],
+    },
 })

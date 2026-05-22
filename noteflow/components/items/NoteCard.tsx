@@ -1,30 +1,39 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { Note } from '@/types';
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
 import Animated, { FadeInDown, FadeOutLeft, useAnimatedStyle, interpolate, SharedValue } from "react-native-reanimated";
 import { Ionicons } from '@expo/vector-icons';
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { useRef, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface NoteCardProps {
   note: Note;
   onPress: () => void;
   onArchive: () => void;
 }
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
-function LeftAction({ dragX }: { dragX: SharedValue<number> }) { 
+function RightAction({ dragX }: { dragX: SharedValue<number> }) { 
     const animatedStyle = useAnimatedStyle(() => ({ 
-        width: Math.max(0, -dragX.value), 
-        opacity: interpolate(-dragX.value, [0, 80], [0, 1]), 
+        width: Math.min(SCREEN_WIDTH, Math.max(0, -dragX.value)),
+        opacity: interpolate(-dragX.value, [0, 80], [0.5, 1]), 
 }));
     return ( 
-        <Animated.View style={[styles.leftAction, animatedStyle]}> 
+        <Animated.View style={[styles.rightAction, animatedStyle]}> 
+            <LinearGradient
+                colors={['transparent', color.neutral[600]]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={StyleSheet.absoluteFill}
+            />
             <Ionicons name="archive" size={28} color={color.neutral[0]} /> 
         </Animated.View> 
     ); 
 }
 
 export default function NoteCard({ note, onPress, onArchive }: NoteCardProps) {
-    const preview = note.content.length > 100 ? note.content.slice(0, 100) + '...' : note.content;
+    const preview = note.content ? (note.content.length > 100 ? note.content.slice(0, 100) + '...' : note.content) : '';
     const date = new Date(note.createdAt).toLocaleDateString("es-ES", {
         day: '2-digit',
         month: 'short',
@@ -33,16 +42,30 @@ export default function NoteCard({ note, onPress, onArchive }: NoteCardProps) {
 
     const theme = useAppTheme();
     const renderRightActions = (_prog: SharedValue<number>, dragX: SharedValue<number>) => ( 
-            <LeftAction dragX={dragX} /> 
+            <RightAction dragX={dragX} /> 
         );
+        const swipeableRef = useRef<any>(null);
+        const [isArchiving, setIsArchiving] = useState(false);
+        const handleArchive = () => {
+            setIsArchiving(true);
+            setTimeout(() => {
+                onArchive();
+            }, 300);
+        };
+        if(isArchiving) {
+            return null;
+        }
     return (
         <ReanimatedSwipeable
+            ref={swipeableRef}
             renderRightActions={renderRightActions}
             onSwipeableOpen={(direction) => {
-                if (direction === "left") onArchive();
+                if (direction === "left") { 
+                    handleArchive();
+                }
             }}
         >
-        <Animated.View entering={FadeInDown} exiting={FadeOutLeft} style={styles.wrapper}>
+        <Animated.View entering={FadeInDown} exiting={FadeOutLeft.duration(250)} style={styles.wrapper}>
         <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderWidth: 1 }]} onPress={onPress}>
             <View style={[styles.accent, { backgroundColor: theme.colors.primary }]} />
             <View style={styles.content}>
@@ -126,12 +149,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    leftAction: {
-        backgroundColor: color.neutral[600], 
+    rightAction: {
         justifyContent: "center", 
         alignItems: "center", 
         height: "100%", 
-        borderRadius: radius.xl, 
+        borderTopRightRadius: radius.xl,
+        borderBottomRightRadius: radius.xl,
         marginVertical: spacing[2], 
         minWidth: 80,
     },
