@@ -33,6 +33,49 @@ export const color = {
   }
 } as const;
 
+export const ideaColors = {
+  rose: {
+    light: "#FFCDD2",
+    dark: "#7F1D1D",
+  },
+  pink: {
+    light: "#F8BBD0",
+    dark: "#831843",
+  },
+  purple: {
+    light: "#E1BEE7",
+    dark: "#581C87",
+  },
+  deepPurple: {
+    light: "#D1C4E9",
+    dark: "#4C1D95",
+  },
+  indigo: {
+    light: "#C5CAE9",
+    dark: "#312E81",
+  },
+  blue: {
+    light: "#BBDEFB",
+    dark: "#1E3A8A",
+  },
+  sky: {
+    light: "#B3E5FC",
+    dark: "#0C4A6E",
+  },
+  cyan: {
+    light: "#B2EBF2",
+    dark: "#155E75",
+  },
+  teal: {
+    light: "#B2DFDB",
+    dark: "#134E4A",
+  },
+  green: {
+    light: "#C8E6C9",
+    dark: "#14532D",
+  },
+} as const;
+
 export const typography = {
     fontFamily : {
         regular: "System",
@@ -133,3 +176,15 @@ export const useIsDarkMode = () => {
     const colorScheme = useColorScheme();
     return themeMode === "system" ? colorScheme === "dark" : themeMode === "dark";
 };
+export type IdeaColorKey = keyof typeof ideaColors;
+export const getIdeaColor = (colorKey?: string, isDark?: boolean) => {
+  const fallback = isDark ? ideaColors.rose.dark : ideaColors.rose.light;
+  if(!colorKey) {
+    return fallback;
+  }
+  const key = colorKey as IdeaColorKey
+  if(!ideaColors[key]) {
+    return fallback;
+  }
+  return ideaColors[key][isDark ? "dark" : "light"];
+}

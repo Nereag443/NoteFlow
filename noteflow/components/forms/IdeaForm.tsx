@@ -1,20 +1,22 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
-import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
-
-const IDEA_COLORS = ["#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB", "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9"];
+import { color, ideaColors, IdeaColorKey, typography, spacing, radius, useAppTheme } from '@/constants/theme';
 
 interface IdeaFormProps {
     title: string;
     tags: string;
-    selectedColor: string;
+    selectedColor: IdeaColorKey;
     onTitleChange: (text: string) => void;
     onTagsChange: (text: string) => void;
-    onColorChange: (color: string) => void;
+    onColorChange: (color: IdeaColorKey) => void;
     errors: Record<string, string>;
 }
 
 export default function IdeaForm({ title, tags, selectedColor, onTitleChange, onTagsChange, onColorChange, errors }: IdeaFormProps) {
     const theme = useAppTheme();
+    const isDark = theme.dark;
+    const getColorValue = (colorKey: IdeaColorKey) => {
+        return ideaColors[colorKey][isDark ? 'dark' : 'light'];
+    };
     return (
         <View>
             <View style={styles.field}>
@@ -57,18 +59,18 @@ export default function IdeaForm({ title, tags, selectedColor, onTitleChange, on
             </View>
             <View style={styles.labelWithPreview}>
                 <Text style={[styles.label, { color: theme.colors.textMuted }]}>Color</Text>
-                <View style={[styles.selectedPreview, { backgroundColor: selectedColor, borderColor: theme.colors.border }]} />
+                <View style={[styles.selectedPreview, { backgroundColor: getColorValue(selectedColor), borderColor: theme.colors.border }]} />
             </View>
             <View style={styles.colorPicker}>
-                {IDEA_COLORS.map((c) => (
+                {Object.entries(ideaColors).map(([key, shades]) => (
                     <Pressable
-                        key={c}
+                        key={key}
                         style={[
                             styles.colorOption,
-                            { backgroundColor: c },
-                            selectedColor === c && { borderColor: theme.colors.primary },
+                            { backgroundColor: shades[isDark ? 'dark' : 'light']},
+                            selectedColor === key && { borderColor: theme.colors.primary },
                         ]}
-                        onPress={() => onColorChange(c)}
+                        onPress={() => onColorChange(key as IdeaColorKey)}
                     />
                 ))}
             </View>

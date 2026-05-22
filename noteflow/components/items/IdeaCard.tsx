@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { IdeaNote } from "@/types";
-import { color, radius, spacing, typography } from "@/constants/theme";
-import { useRef } from "react";
+import { color, radius, spacing, typography, useAppTheme, getIdeaColor } from "@/constants/theme";
 import Svg, { Polygon } from "react-native-svg";
 import Animated, { FadeInDown, FadeOutLeft } from "react-native-reanimated";
 
@@ -14,9 +13,10 @@ interface IdeaCardProps {
 
 export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
     const date = new Date(idea.updatedAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+    const theme = useAppTheme();
     return (
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
-        <Pressable style={[styles.card, { backgroundColor: idea.color }]} onPress={onPress}>
+        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: getIdeaColor(idea.color, theme.dark) }]} onPress={onPress}>
             <Svg 
                 width={28}
                 height={28}
@@ -86,5 +86,9 @@ const styles = StyleSheet.create ({
     date: {
         fontSize: typography.fontSize.xs,
         color: color.neutral[600],
+    },
+    cardPressed: {
+        opacity: 0.96,
+        transform: [{ scale: 0.985 }],
     },
 })
