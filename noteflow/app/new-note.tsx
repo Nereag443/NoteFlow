@@ -3,7 +3,7 @@ import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Text, Pressable
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { z } from "zod";
 import { useNoteStore } from "@/store/notesStore";
-import { color, spacing, radius, typography, useAppTheme } from "@/constants/theme";
+import { color, spacing, radius, typography, useAppTheme, IdeaColorKey } from "@/constants/theme";
 import { NoteType, Priority } from "@/types";
 import TypeSelector from "@/components/forms/TypeSelector";
 import NoteForm from "@/components/forms/NoteForm";
@@ -31,10 +31,11 @@ export default function NewNote() {
     const [content, setContent] = useState("");
     const [tags, setTags] = useState("");
     const [checklistItems, setChecklistItems] = useState<string[]>([]);
-    const [selectedColor, setSelectedColor] = useState<string>(color.primary[500]);
+    const [selectedColor, setSelectedColor] = useState<IdeaColorKey>("rose");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const addNote = useNoteStore((state) => state.addNote);
     const addChecklist = useNoteStore((state) => state.addChecklist);
+    const addChecklistItem = useNoteStore((state) => state.addChecklistItem)
     const addIdea = useNoteStore((state) => state.addIdea);
     const navigation = useNavigation();
     const generateId = () => Math.random().toString(36).slice(2);
@@ -52,10 +53,8 @@ export default function NewNote() {
       })
     }, [pageTitle]);
 
-    const handleSave = () => {
+    const handleSave = async () => {
       setErrors({});
-      const now = new Date();
-
       if (type === "note") {
         const result = noteSchema.safeParse({ title, content });
         if (!result.success) {
@@ -66,15 +65,8 @@ export default function NewNote() {
           setErrors(fieldErrors);
           return;
         }
-        addNote({
-          id: generateId(),
-          title,
-          content: content || "",
-          createdAt: now,
-          updatedAt: now,
-          archived: false,
-        });
-      }
+        await addNote({ title, content: content || "" });
+      };
 
       if (type === "checklist") {
         const result = checklistSchema.safeParse({ title });
@@ -82,21 +74,12 @@ export default function NewNote() {
           setErrors({ title: result.error.issues[0].message });
           return;
         }
-        addChecklist({
-          id: generateId(),
-          title,
-          items: checklistItems
-            .filter((text) => text.trim().length > 0)
-            .map((text) => ({
-              id: generateId(),
-              text,
-              isCompleted: false,
-            })),
-          createdAt: now,
-          updatedAt: now,
-          priority,
-          archived: false,
-        });
+        const checklist = await addChecklist({ title, priority });
+        if(!checklist) return;
+        const validItems = checklistItems.filter((text) => text.trim().length >0);
+        for (const text of validItems) {
+          await addChecklistItem(checklist.id, text.trim());
+        }
       }
 
       if (type === "idea") {
@@ -109,17 +92,17 @@ export default function NewNote() {
           setErrors(fieldErrors);
           return;
         }
-        addIdea({
-          id: generateId(),
+        await addIdea({
           title,
-          tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
-          color: selectedColor,
-          createdAt: now,
-          updatedAt: now,
-          archived: false,
+        color: selectedColor,
+        tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
         });
       }
-      router.back();
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/(tabs)/notas");
+      }
     };
 
     const theme = useAppTheme();
