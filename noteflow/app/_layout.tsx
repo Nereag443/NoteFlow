@@ -7,20 +7,22 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 
 export default function RootLayout() {
-  const hasHydrated = useNoteStore((state) => state._hasHydrated);
   const themeMode = useNoteStore((state) => state.themeMode);
+  const fetchNotes = useNoteStore((state) => state.fetchNotes);
+  const fetchChecklists = useNoteStore((state) => state.fetchChecklists);
+  const fetchIdeas = useNoteStore((state) => state.fetchIdeas);
+  const isLoadingNotes = useNoteStore((state) => state.isLoadingNotes)
   const colorScheme = useColorScheme();
   const resolvedScheme =
     themeMode === "system" ? colorScheme : themeMode;
   const theme = resolvedScheme === "dark" ? darkTheme : lightTheme;
 
-  if(!hasHydrated){
-    return (
-      <View style={{ flex:1, justifyContent: "center", alignItems: "center"}}>
-        <ActivityIndicator size="large" color={color.primary[500]} />
-      </View>
-    )
-  }
+  useEffect(() => {
+    fetchNotes();
+    fetchChecklists();
+    fetchIdeas();
+  }, []);
+
   useEffect(() => {
     if (typeof document !== 'undefined') {
         const style = document.createElement('style');
@@ -40,6 +42,14 @@ export default function RootLayout() {
     }
   }), [theme.colors.primary];
 
+  if(isLoadingNotes) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={color.primary[500]} />
+      </View>
+    )
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <PaperProvider theme={theme}>
@@ -56,6 +66,15 @@ export default function RootLayout() {
         <Stack.Screen name="ideas/[id]" options={{ title: "Idea" }} />
         <Stack.Screen name="archived" options={{ title: "Archivados" }} />
       </Stack>
+      {isLoadingNotes && (
+        <View style={{ 
+          position: "absolute", flex: 1, width: "100%", height: "100%",
+          justifyContent: "center", alignItems: "center",
+          backgroundColor: theme.colors.background 
+        }}>
+          <ActivityIndicator size="large" color={color.primary[500]} />
+        </View>
+      )}
     </PaperProvider>
     </GestureHandlerRootView>
   );
