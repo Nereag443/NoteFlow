@@ -39,6 +39,7 @@ export default function TabsLayout() {
     if (pathname.includes("notas")) return "note";
     if (pathname.includes("checklists")) return "checklist";
     if (pathname.includes("ideas")) return "idea";
+    return "note";
   };
 
   return (

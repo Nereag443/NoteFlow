@@ -51,11 +51,7 @@ export default function ChecklistDetail() {
     };
     const addItem = () => {
       if(!newItem.trim()) return;
-      addChecklistItem(checklist.id, {
-        id: Math.random().toString(36).slice(2),
-        text: newItem.trim(),
-        isCompleted: false,
-      });
+      addChecklistItem(checklist.id, newItem.trim());
       setNewItem("");
     }
     return (
