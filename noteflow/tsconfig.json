@@ -3,6 +3,7 @@
   "compilerOptions": {
     "types": [
       "@expo/vector-icons",
+      "node",
     ],
     "strict": true,
     "paths": {
