@@ -1,33 +1,87 @@
 import { IdeaNote } from "@/types";
 import { StateCreator } from "zustand";
+import * as api from "@/lib/api";
 
 export interface IdeasSlice {
   ideas: IdeaNote[];
-  addIdea: (idea: IdeaNote) => void;
-  setIdeas: (ideas: IdeaNote[]) => void;
-  deleteIdea: (id: string) => void;
-  archiveIdea: (id: string) => void;
-  unarchiveIdea: (id: string) =>void
+  isLoadingIdeas: boolean;
+  errorIdeas: string | null;
+  fetchIdeas: () => Promise<void>;
+  addIdea: (data: { title: string; color?: string; tags?: string[] }) => Promise<void>;
+  deleteIdea: (id: string) => Promise<void>;
+  archiveIdea: (id: string) => Promise<void>;
+  unarchiveIdea: (id: string) =>Promise<void>;
 }
 
 export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
   ideas: [],
   archivedIdeas: [],
-  addIdea: (idea) =>
-    set((state) => ({ ideas: [...state.ideas, idea] })),
-  setIdeas: (ideas) => set({ ideas }),
-  deleteIdea: (id) =>
-    set((state) => ({ ideas: state.ideas.filter((i) => i.id !== id) })),
-  archiveIdea: (id) =>
-    set((state) => ({
-      ideas: state.ideas.map((i) =>
-        i.id === id ? { ...i, archived: true, updatedAt: new Date() } : i
-      )
-    })),
-    unarchiveIdea: (id) =>
-    set((state) => ({
+  isLoadingIdeas: false,
+  errorIdeas: null,
+  fetchIdeas: async () => {
+    set({ isLoadingIdeas: true, errorIdeas: null });
+    try {
+        const ideas = await api.getIdeas();
+        set({
+            ideas: ideas.map((i: any) => ({
+                ...i,
+                tags: i.tags ?? [],
+                createdAt: new Date(i.created_at),
+                updatedAt: new Date(i.updated_at)
+            }))
+        });
+    } catch {
+        set({ errorIdeas: 'Error al cargar ideas' });
+    } finally {
+        set({ isLoadingIdeas: false });
+    }
+},
+  addIdea: async (data) => {
+    try {
+        const idea = await api.createIdea(data);
+        set((state) => ({ 
+            ideas: [{ 
+                ...idea, 
+                tags: (idea.tags ?? []).filter(Boolean),
+                createdAt: new Date(idea.created_at),
+                updatedAt: new Date(idea.updated_at),
+            }, ...state.ideas] 
+        }));
+    } catch {
+        set({ errorIdeas: 'Error al crear idea' });
+    }
+  },
+
+  deleteIdea: async (id) => {
+    try {
+      await api.deleteIdea(id);
+      set((state) => ({ ideas: state.ideas.filter((i) => i.id !== id) }));
+    } catch {
+      set({ errorIdeas: 'Error eliminando idea' })
+    }
+  },
+  archiveIdea: async (id) => {
+    try {
+      const updated = await api.updateIdea(id, { archived: true });
+      set((state) => ({
         ideas: state.ideas.map((i) =>
-            i.id === id ? { ...i, archived: false, updatedAt: new Date() } : i
+          i.id === id ? { ...i, archived: updated.archived } : i
+        )
+      }));
+    } catch {
+      set({ errorIdeas: 'Error al archivar idea' })
+    }
+  },
+    unarchiveIdea: async (id) => {
+      try {
+        const updated = await api.updateIdea(id, { archived: false });
+        set((state) => ({
+          ideas: state.ideas.map((i) =>
+            i.id === id ? { ...i, archived: updated.archived } : i
         ),
-    })),
+      }));
+    } catch {
+      set({ errorIdeas: 'Error al desarchivar idea' })
+    }
+  },
 });
