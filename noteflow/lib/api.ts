@@ -1,7 +1,19 @@
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://noteflow-api-sigma.vercel.app/api';
 
+import { getToken } from "./auth";
+
+async function authHeaders(){
+    const token = await getToken();
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}`}: {}),
+    }
+}
+
 export async function getNotes() {
-    const res = await fetch(`${BASE_URL}/notes`);
+    const res = await fetch(`${BASE_URL}/notes`, {
+        headers: await authHeaders(),
+    });
     if(!res.ok) {
         throw new Error('Error al cargar notas');
     } 
@@ -9,7 +21,9 @@ export async function getNotes() {
 }
 
 export async function getNoteById(id: string) {
-    const res = await fetch(`${BASE_URL}/notes/${id}`);
+    const res = await fetch(`${BASE_URL}/notes/${id}`, {
+        headers: await authHeaders(),
+    });
     if (!res.ok) {
         throw new Error('Error al cargar nota');
     }
@@ -23,9 +37,7 @@ export async function createNote(data: {
 }) {
     const res = await fetch(`${BASE_URL}/notes`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json' 
-        },
+        headers: await authHeaders(),
         body: JSON.stringify({ ...data, type: 'note' }),
     });
     if(!res.ok) {
@@ -41,9 +53,7 @@ export async function updateNote(id: string, data: {
 }) {
     const res = await fetch(`${BASE_URL}/notes/${id}`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     });
     if(!res.ok) {
@@ -55,6 +65,7 @@ export async function updateNote(id: string, data: {
 export async function deleteNote(id: string) {
     const res = await fetch(`${BASE_URL}/notes/${id}`, {
         method: 'DELETE',
+        headers: await authHeaders(),
     });
     if(!res.ok) {
         throw new Error('Error al eliminar nota');
@@ -62,7 +73,9 @@ export async function deleteNote(id: string) {
 }
 
 export async function getChecklists() {
-    const res = await fetch(`${BASE_URL}/checklists`);
+    const res = await fetch(`${BASE_URL}/checklists`, {
+        headers: await authHeaders(),
+    });
     if (!res.ok) {
         throw new Error('Error al cargar checklists');
     }
@@ -76,9 +89,7 @@ export async function createChecklist(data: {
 }) {
     const res = await fetch(`${BASE_URL}/checklists`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     })
     if(!res.ok) {
@@ -94,9 +105,7 @@ export async function updateChecklist(id: string, data: {
 }) {
     const res = await fetch(`${BASE_URL}/checklists/${id}`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     })
     if(!res.ok) {
@@ -108,6 +117,7 @@ export async function updateChecklist(id: string, data: {
 export async function deleteChecklist(id: string) {
     const res = await fetch(`${BASE_URL}/checklists/${id}`, {
         method: 'DELETE',
+        headers: await authHeaders(),
     })
     if(!res.ok) {
         throw new Error('Error al eliminar item');
@@ -117,9 +127,7 @@ export async function deleteChecklist(id: string) {
 export async function createChecklistItem(checklistId: string, text: string) {
     const res = await fetch(`${BASE_URL}/checklists/${checklistId}/checklist-items`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify({ text }),
     });
     if(!res.ok) {
@@ -134,9 +142,7 @@ export async function updateChecklistItem(itemId: string, data: {
 }) {
     const res = await fetch(`${BASE_URL}/checklist-items/${itemId}`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     });
     if(!res.ok) {
@@ -146,14 +152,19 @@ export async function updateChecklistItem(itemId: string, data: {
 }
 
 export async function deleteChecklistItem(itemId: string) {
-    const res = await fetch(`${BASE_URL}/checklist-items/${itemId}`, { method: 'DELETE' });
+    const res = await fetch(`${BASE_URL}/checklist-items/${itemId}`, { 
+        method: 'DELETE', 
+        headers: await authHeaders(),
+    });
     if(!res.ok) {
         throw new Error('Error al eliminar item')
     }
 }
 
 export async function getIdeas() {
-    const res = await fetch(`${BASE_URL}/ideas`);
+    const res = await fetch(`${BASE_URL}/ideas`, {
+        headers: await authHeaders(),
+    });
     if(!res.ok) {
         throw new Error('Error al cargar ideas');
     }
@@ -168,9 +179,7 @@ export async function createIdea(data: {
 }) {
     const res = await fetch(`${BASE_URL}/ideas`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     });
     if(!res.ok) {
@@ -186,9 +195,7 @@ export async function updateIdea(id: string, data: {
 }) {
     const res = await fetch(`${BASE_URL}/ideas/${id}`, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: await authHeaders(),
         body: JSON.stringify(data),
     });
     if(!res.ok) {
@@ -200,6 +207,7 @@ export async function updateIdea(id: string, data: {
 export async function deleteIdea(id: string) {
     const res = await fetch(`${BASE_URL}/ideas/${id}`, {
         method: 'DELETE',
+        headers: await authHeaders(),
     })
     if(!res.ok) {
         throw new Error('Error al eliminar idea');
@@ -209,9 +217,7 @@ export async function deleteIdea(id: string) {
 export async function createTag(ideaId: string, text: string) {
     const res = await fetch(`${BASE_URL}/notes/${ideaId}/tags`, {
         method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json' 
-        },
+        headers: await authHeaders(),
         body: JSON.stringify({ text }),
     });
     if (!res.ok) { 
@@ -223,6 +229,7 @@ export async function createTag(ideaId: string, text: string) {
 export async function deleteTag(tagId: string) {
     const res = await fetch(`${BASE_URL}/tags/${tagId}`, {
         method: 'DELETE',
+        headers: await authHeaders(),
     });
     if (!res.ok) {
         throw new Error('Error al eliminar tag');
