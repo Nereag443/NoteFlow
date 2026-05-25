@@ -1,12 +1,14 @@
 import { useNoteStore } from "@/store/notesStore";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { ActivityIndicator, PaperProvider } from "react-native-paper";
 import { View, useColorScheme } from "react-native";
 import { color, lightTheme, darkTheme } from "@/constants/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FirebaseAuthTypes, getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 
 export default function RootLayout() {
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null | undefined>(undefined);
   const themeMode = useNoteStore((state) => state.themeMode);
   const fetchNotes = useNoteStore((state) => state.fetchNotes);
   const fetchChecklists = useNoteStore((state) => state.fetchChecklists);
@@ -18,9 +20,19 @@ export default function RootLayout() {
   const theme = resolvedScheme === "dark" ? darkTheme : lightTheme;
 
   useEffect(() => {
-    fetchNotes();
-    fetchChecklists();
-    fetchIdeas();
+    const firebaseAuth = getAuth();
+    const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
+      setUser(firebaseUser);
+    if(firebaseUser){
+      fetchNotes();
+      fetchChecklists();
+      fetchIdeas();
+      router.replace("/(tabs)/notas");
+    }else {
+      router.replace("/auth/login");
+    }
+  });
+  return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -42,14 +54,6 @@ export default function RootLayout() {
     }
   }), [theme.colors.primary];
 
-  if(isLoadingNotes) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={color.primary[500]} />
-      </View>
-    )
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <PaperProvider theme={theme}>
@@ -60,13 +64,15 @@ export default function RootLayout() {
         headerShadowVisible: false,
       }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/login/index" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/register/index" options={{ headerShown: false }} />
         <Stack.Screen name="new-note" options={{ presentation: "modal", title: "Nueva nota "}} />
         <Stack.Screen name="notas/[id]" options={{ title: "Nota" }} />
         <Stack.Screen name="checklists/[id]" options={{ title: "Checklist" }} />
         <Stack.Screen name="ideas/[id]" options={{ title: "Idea" }} />
         <Stack.Screen name="archived" options={{ title: "Archivados" }} />
       </Stack>
-      {isLoadingNotes && (
+      {(user === undefined || isLoadingNotes) && (
         <View style={{ 
           position: "absolute", flex: 1, width: "100%", height: "100%",
           justifyContent: "center", alignItems: "center",
