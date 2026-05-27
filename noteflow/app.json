@@ -36,7 +36,8 @@
       "expo-font",
       "expo-secure-store",
       "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "@react-native-firebase/auth",
+      "expo-image-picker"
     ],
     "scheme": "noteflow",
     "extra": {
