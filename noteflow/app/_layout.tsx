@@ -71,6 +71,7 @@ export default function RootLayout() {
         <Stack.Screen name="checklists/[id]" options={{ title: "Checklist" }} />
         <Stack.Screen name="ideas/[id]" options={{ title: "Idea" }} />
         <Stack.Screen name="archived" options={{ title: "Archivados" }} />
+        <Stack.Screen name="profile" options={{ title: "Perfil" }} />
       </Stack>
       {(user === undefined || isLoadingNotes) && (
         <View style={{ 
