@@ -1,11 +1,14 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, Text, StyleSheet, View } from "react-native";
+import { Pressable, Text, StyleSheet, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme, useIsDarkMode, color, typography } from "@/constants/theme";
 import { useNoteStore } from "@/store/notesStore";
 import { TabConfig } from "@/types";
 import { router, usePathname } from "expo-router";
+import { getAuth } from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { useState, useEffect } from "react";
 
 const TABS: TabConfig[] = [
   {
@@ -34,6 +37,21 @@ export default function TabsLayout() {
   const themeMode = useNoteStore((state) => state.themeMode);
   const toggleTheme = useNoteStore((state) => state.toggleTheme);
   const pathname = usePathname();
+  const avatarUrl = useNoteStore((state) => state.avatarUrl);
+  const setStoreAvatarUrl = useNoteStore((state) => state.setAvatarUrl);
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      const user = getAuth().currentUser;
+      if(!user) return;
+      const db = getFirestore();
+      const doSnap = await getDoc(doc(db, "users", user.uid));
+      if(doSnap.exists()){
+        setStoreAvatarUrl(doSnap.data().avatarUrl ?? undefined);
+      }
+    };
+    loadAvatar();
+  }, [])
 
   const getType = () => {
     if (pathname.includes("notas")) return "note";
@@ -57,12 +75,18 @@ export default function TabsLayout() {
           <Text style={[styles.title, { color: theme.colors.text }]}>NoteFlow</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable onPress={() => router.push("/archived")} style={[styles.archiveButton, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}>
+          <Pressable onPress={() => router.push("/archived")} style={{ padding: 8, borderRadius: 8,
+    backgroundColor: theme.colors.surfaceVariant }}>
             <Ionicons name="archive-outline" size={20} color={theme.colors.text} />
           </Pressable>
-          <Pressable style={[styles.themeToggle, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]} onPress={toggleTheme}>
-            <Ionicons name={isDarkMode ? "moon" : "sunny"} size={20} color={theme.colors.text} style={styles.themeIcon} />
-            <Text style={[styles.themeToggleText, { color: theme.colors.text }]}>{themeMode === "dark" ? "Oscuro" : themeMode === "light" ? "Claro" : "Auto"}</Text>
+          <Pressable style={styles.avatar} onPress={() => router.push("/profile")}>
+            {avatarUrl ? (
+              <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
+            ) : (
+              <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
+                <Ionicons name="person" size={20} color={color.neutral[0]} />
+              </View>
+            )}
           </Pressable>
         </View>
       </View>
@@ -136,20 +160,11 @@ const styles = StyleSheet.create ({
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
   },
-  themeToggle: {
-    flexDirection: "row",
+  avatar: {
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  themeIcon: {
-    marginRight: 8,
-  },
-  themeToggleText: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold,
+    width: 38,
+    height: 38,
+    justifyContent: "center",
   },
   addButton: {
     position: "absolute",
@@ -183,4 +198,9 @@ const styles = StyleSheet.create ({
     borderRadius: 999,
     borderWidth: 1,
   },
+  avatarImage: {
+    width: 38,
+    height: 38,
+    borderRadius: 999,
+  }
 })
