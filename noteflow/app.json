@@ -37,7 +37,13 @@
       "expo-secure-store",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "expo-image-picker"
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Noteflow necesita acceso a la cámara para cambiar la su foto de perfil",
+          "photosPermission": "Noteflow necesita acceso a su galería para cambiar la foto de su perfil"
+        }
+      ]
     ],
     "scheme": "noteflow",
     "extra": {
