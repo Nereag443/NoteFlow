@@ -2,7 +2,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://noteflow-api-sigma.
 
 import { getToken } from "./auth";
 
-async function authHeaders(){
+export async function authHeaders(){
     const token = await getToken();
     return {
         'Content-Type': 'application/json',
@@ -233,5 +233,48 @@ export async function deleteTag(tagId: string) {
     });
     if (!res.ok) {
         throw new Error('Error al eliminar tag');
+    }
+}
+
+export async function getPresignedUrl(fileName: string, contentType: string){
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    try {
+        const res = await fetch(`${BASE_URL}/upload`, {
+            method: 'POST',
+            headers: await authHeaders(),
+            body: JSON.stringify({ fileName, contentType }),
+            signal: controller.signal,
+        });
+        if(!res.ok){
+            throw new Error('Error al obtener URL de subida');
+        }
+        return res.json();
+    }catch(e){
+        clearTimeout(timeout);
+        console.log('fetch error:', e);
+        throw e;
+    }
+}
+
+
+export async function uploadToS3(signedUrl: string, localUri: string){
+    const res = await fetch(localUri);
+    const blob = await res.blob();
+    await fetch(signedUrl, {
+        method: 'PUT',
+        body: blob,
+        headers: { 'Content-Type': 'image/jpeg' },
+    });
+}
+
+export async function deleteAvatar(key: string){
+    const res = await fetch(`${BASE_URL}/avatar`, {
+        method: 'DELETE',
+        headers: await authHeaders(),
+        body: JSON.stringify({ key }),
+    });
+    if(!res.ok) {
+        throw new Error('Error al eliminar avatar');
     }
 }
