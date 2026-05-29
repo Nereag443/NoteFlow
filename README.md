@@ -82,7 +82,7 @@ noteflow/
 Asegúrate de tener instalado:
  - Node.js
  - npm
- - EAS CLI: `npm install -g eas-cli`
+ - EAS CLI (solo necesario para generar el Development Build): `npm install -g eas-cli`
 
 ## Instalación
 
