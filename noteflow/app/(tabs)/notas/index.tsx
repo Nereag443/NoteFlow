@@ -17,7 +17,7 @@ export default function NotasScreen() {
         .filter((n) => !n.archived)
         .filter((n) =>
             n.title.toLowerCase().includes(search.toLowerCase()) ||
-            n.content.toLowerCase().includes(search.toLowerCase()));
+            String(n.content ?? '').toLowerCase().includes(search.toLowerCase()));
     const theme = useAppTheme();
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}> 
