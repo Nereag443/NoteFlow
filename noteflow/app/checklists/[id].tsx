@@ -111,59 +111,61 @@ export default function ChecklistDetail() {
                     <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.colors.primary }]} />
                 </View>
 
-                {checklist.items.map((item) => (
-                  <View key={item.id} style={[styles.item, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
-                  <Pressable onPress={() => handleToggle(item.id)}>
-                    <View style={[styles.checkbox, item.isCompleted && styles.checkboxDone, { borderColor: theme.colors.primary, backgroundColor: item.isCompleted ? theme.colors.primary : 'transparent' }]} />
-                  </Pressable>
-                  {editingItemId === item.id ? (
-                    <TextInput
-                      style={[styles.itemInput, { color: theme.colors.text }]}
-                      value={editingItemText}
-                      onChangeText={setEditingItemText}
-                      autoFocus
-                      selectionColor={theme.colors.primary}
-                      onBlur={() => {
-                        updateChecklistItem(checklist.id, item.id, editingItemText.trim() || item.text);
-                        setEditingItemId(null);
-                      }}
-                      returnKeyType="done"
-                      onSubmitEditing={() => {
-                        updateChecklistItem(checklist.id, item.id, editingItemText.trim() || item.text);
-                        setEditingItemId(null);
-                      }}
-                    />
-                  ) : (
-                    <>
-                    <Text style={[styles.itemText, item.isCompleted && styles.itemTextDone, { color: item.isCompleted ? theme.colors.textMuted : theme.colors.text, flex: 1 }]}>
-                      {item.text}
-                    </Text>
-                    <Pressable onPress={() => { setEditingItemId(item.id); setEditingItemText(item.text); }}>
-                      <Ionicons name="pencil" size={18} color={theme.colors.textMuted} />
-                    </Pressable>
-                    </>
-                  )}
-                    <Pressable onPress={() => deleteChecklistItem(checklist.id, item.id)}>
-                      <Ionicons name="close-circle-outline" size={20} color={theme.colors.textMuted} />
-                    </Pressable>
-            </View>
-          ))}
-                <View style={styles.inputContainer}>
-                <View style={[styles.inputRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-                  <TextInput
-                    style={[styles.input, { color: theme.colors.text }]}
-                    value={newItem}
-                    onChangeText={setNewItem}
-                    placeholder="Nueva tarea..."
-                    placeholderTextColor={theme.colors.textMuted}
-                    onSubmitEditing={addItem}
-                    returnKeyType="done"
-                  />
+                {checklist.items.length === 0 ? (
+                  <View style={[styles.emptyList, { backgroundColor: theme.colors.surface }]}> 
+                    <Text style={[styles.emptyText, { color: theme.colors.textMuted }]}>No hay tareas. Agrega la primera usando el formulario abajo.</Text>
                   </View>
-                <Pressable style={[styles.addBtn, { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }]} onPress={addItem}>
-                  <Text style={[styles.addBtnText, { color: theme.colors.onPrimary }]}>Agregar tarea</Text>
-                </Pressable>
-                </View>
+                ) : (
+                  checklist.items.map((item) => (
+                    <Pressable key={item.id} onPress={() => handleToggle(item.id)} style={({ pressed }) => [styles.item, pressed && styles.itemPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                      <View style={[styles.checkbox, item.isCompleted && styles.checkboxDone, { borderColor: theme.colors.primary, backgroundColor: item.isCompleted ? theme.colors.primary : 'transparent' }]} />
+                      {editingItemId === item.id ? (
+                        <TextInput
+                          style={[styles.itemInput, { color: theme.colors.text }]}
+                          value={editingItemText}
+                          onChangeText={setEditingItemText}
+                          autoFocus
+                          selectionColor={theme.colors.primary}
+                          onBlur={() => {
+                            updateChecklistItem(checklist.id, item.id, editingItemText.trim() || item.text);
+                            setEditingItemId(null);
+                          }}
+                          returnKeyType="done"
+                          onSubmitEditing={() => {
+                            updateChecklistItem(checklist.id, item.id, editingItemText.trim() || item.text);
+                            setEditingItemId(null);
+                          }}
+                        />
+                      ) : (
+                        <Text style={[styles.itemText, item.isCompleted && styles.itemTextDone, { color: item.isCompleted ? theme.colors.textMuted : theme.colors.text, flex: 1 }]} numberOfLines={2}>{item.text}</Text>
+                      )}
+                      <View style={styles.itemActions}>
+                        <Pressable onPress={() => { setEditingItemId(item.id); setEditingItemText(item.text); }} style={styles.iconBtn}>
+                          <Ionicons name="pencil" size={18} color={theme.colors.textMuted} />
+                        </Pressable>
+                        <Pressable onPress={() => deleteChecklistItem(checklist.id, item.id)} style={styles.iconBtn}>
+                          <Ionicons name="trash-outline" size={18} color={theme.colors.textMuted} />
+                        </Pressable>
+                      </View>
+                    </Pressable>
+                  ))
+                )}
+                <View style={styles.inputContainer}>
+                  <View style={[styles.inputRow, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                    <TextInput
+                      style={[styles.input, { color: theme.colors.text }]}
+                      value={newItem}
+                      onChangeText={setNewItem}
+                      placeholder="Nueva tarea..."
+                      placeholderTextColor={theme.colors.textMuted}
+                      onSubmitEditing={addItem}
+                      returnKeyType="done"
+                    />
+                    </View>
+                    <Pressable style={({ pressed }) => [styles.addBtn, { backgroundColor: theme.colors.primary, opacity: pressed ? 0.9 : 1 }]} onPress={addItem}>
+                      <Text style={[styles.addBtnText, { color: theme.colors.onPrimary }]}>Añadir tarea</Text>
+                    </Pressable>
+                  </View>
             </View>
         </>
     );
@@ -217,18 +219,43 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     color: color.neutral[400],
   },
+  itemActions: {
+    flexDirection: "row",
+    gap: spacing[2],
+    alignItems: "center",
+    marginLeft: spacing[3],
+  },
+  iconBtn: {
+    padding: spacing[1],
+    borderRadius: radius.sm,
+  },
+  itemPressed: {
+    opacity: 0.95,
+    transform: [{ scale: 0.998 }],
+  },
   addBtn: {
     width: 100,
     height: 48,
     borderRadius: radius.md,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    marginRight: spacing[1],
   },
   addBtnText: {
     fontSize: typography.fontSize.md,
     color: color.neutral[900],
     fontWeight: typography.fontWeight.semibold,
     lineHeight: 24,
+  },
+  emptyList: {
+    padding: spacing[4],
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing[4],
+  },
+  emptyText: {
+    fontSize: typography.fontSize.sm,
   },
   notFound: {
     flex: 1,
