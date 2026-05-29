@@ -1,5 +1,5 @@
 # NoteFlow
-NoteFlow es una aplicación móvil de gestión de notas desarrollada con React Native y Expo. Permite crear, organizar y gestionar notas de forma rápida e intuitiva desde cualquier dispositivo móvil.
+NoteFlow es una aplicación móvil de gestión de notas desarrollada con React Native y Expo. Permite crear, organizar y gestionar notas de forma rápida e intuitiva desde cualquier dispositivo móvil, con autenticación de usuarios y foto de perfil almacenada en AWS S3.
 
 ## Tecnologías utilizadas
 
@@ -12,8 +12,12 @@ NoteFlow es una aplicación móvil de gestión de notas desarrollada con React N
  - [React Native Paper](https://callstack.github.io/react-native-paper/) (Componentes UI)
  - [Expo Linear gradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/) (Degradados)
  - [expo-haptics](https://docs.expo.dev/versions/latest/sdk/haptics/) (Vibración tactil)
+ - [expo-image-picker](https://docs.expo.dev/versions/latest/sdk/imagepicker/) (Galería y cámara)
+ - [expo-secure-store](https://docs.expo.dev/versions/latest/sdk/securestore/) (Almacenamiento seguro)
  - [Zod](https://zod.dev/) (Validación de datos)
  - [TypeScript](https://www.typescriptlang.org/)
+ - [Firebase](https://firebase.google.com) (Autenticación y perfil de usuario)
+ - [AWS S3](https://aws.amazon.com/es/s3/) (Almacenamiento de imágenes)
 
 ## Estructura del proyecto
 
@@ -28,6 +32,11 @@ noteflow/
 │   │    ├── notas/             # Módulo de notas
 │   │    │    └── index.tsx     # Lista de notas
 │   │    └── _layout.tsx        # Layout principal de tabs
+│   ├── auth/                   # Pantalla de autenticación
+│   │    ├── login/ 
+│   │    │   └── index.tsx      # Pantalla de inicio de sesión
+│   │    └── register/
+│   │        └── index.tsx      # Pantalla de registro 
 │   ├── checklists/
 │   │   └── [id].tsx            # Detalle y edición de checklist
 │   ├── ideas/
@@ -37,6 +46,7 @@ noteflow/
 │   ├── _layout.tsx             # Layout raíz
 │   ├── archived.tsx            # Pantalla de elementos archivados
 │   ├── index.tsx               # Redirección a pantalla principal
+│   ├── profile.tsx             # 
 │   └── new-note.tsx            # Crear nueva nota, checklist o idea
 ├── assets/                     # Imágenes y recursos estáticos
 ├── components/                 # Componentes reutilizables
@@ -53,6 +63,9 @@ noteflow/
 │   └── SearchBar.tsx           # Barra de búsqueda
 ├── constants/                  # Constantes y configuración
 │   └── theme.ts                # Tema visual
+├── lib/                        # Utilidades y servicios
+│   ├── api.ts                  # Funciones para llamar a la API REST
+│   └── auth.ts                 # Gestión del yoken de Firebase
 ├── store/                      # Estado global (Zustand)
 │   ├── slices/                 # Slices por módulo
 │   │   ├── checklistSlice.ts
@@ -69,7 +82,7 @@ noteflow/
 Asegúrate de tener instalado:
  - Node.js
  - npm
- - Expo Go en tu dispositivo móvil (para desarrollo)
+ - EAS CLI: `npm install -g eas-cli`
 
 ## Instalación
 
@@ -84,14 +97,35 @@ cd noteflow
 npm install
 ```
 
+3. Crea el archivo local `.env.local` con la URL de la API:
+```bash
+EXPO_PUBLIC_API_URL=https://tu-proyecto.vercel.app/api
+```
+
 ## Cómo usar el proyecto
 Asegurarse de estar en `noteflow/` antes de ejecutar cualquier comando.
+
+Esta app usa módulos nativos (Firebase, expo-image-picker) y requiere un **Development Build** — no funciona con Expo Go.
+
+### Generar el Development build
+
+```bash
+eas build --profile development --platform android
+```
+
+Instala el APK generado en tu dispositivo Android.
+
+### Iniciar el servidor de desarrollo
+
+```bash
+npx expo start
+```
 
 ### Ver en móvil (URL manual)
 
 1. Inicia el proyecto: `npx expo start`
 2. Ejecuta `ipconfig` y copia tu IP WIFI (ej. `192.168.1.XX`)
-3. Abre Expo Go y escribe: `exp://192.168.1.XX:8081`
+3. Abre la app del Development Build y escribe: `exp://192.168.1.XX:8081`
 
 ### Ver en móvil (QR)
 
@@ -112,6 +146,8 @@ npx expo start --web
 
 ## Funcionalidades principales
 
+- **Autenticación** — registro e inicio de sesión con Firebase Auth
+- **Perfil de usuario** — foto de perfil tomada con cámara o galería, almacenada en AWS S3
 - **Tres tipos de contenido**: notas de texto, checklists con progreso e ideas con etiquetas y color
 - **Edición inline**: edita el título y contenido directamente en la pantalla de detalle
 - **Prioridades**: asigna prioridad alta, media o baja a las checklists con indicador visual de color
@@ -121,9 +157,14 @@ npx expo start --web
 - **Animaciones**: transiciones fluidas con React Native Reanimated
 - **Haptics**: respuesta táctil al completar acciones en móvil
 - **Soporte web**: la app funciona también en navegador
-- **Persistencia de datos**: los datos se guardan localmente con Zustand
 
 ## Ejemplos de uso
+
+**Registrarse**  
+Abre la app, pulsa "¿No tienes cuenta? Regístrate", introduce tu email y contraseña y pulsa "Crear cuenta".
+ 
+**Cambiar foto de perfil**  
+Pulsa el avatar en el header para ir al perfil. Pulsa la foto para elegir entre cámara o galería. Mantén pulsado para ver la foto en grande o eliminarla.
 
 **Crear una nota nueva**  
 Pulsa el botón + en la pantalla principal, escribe el título y el contenido, y guarda.
@@ -133,6 +174,14 @@ Pulsa sobre cualquier nota para abrirla. Pulsa el título para editarlo directam
 
 **Archivar una nota**  
 Desliza la nota hacia la izquierda para archivarla.
+
+## Variables de entorno
+
+| Variable | Descripción |
+|----------|-------------|
+| `EXPO_PUBLIC_API_URL` | URL base de la API REST |
+ 
+Copia `.env.example` a `.env.local` y rellena los valores.
 
 ## API
 
