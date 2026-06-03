@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, Text, StyleSheet, View, Image } from "react-native";
+import { Pressable, Text, StyleSheet, View, Image, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme, useIsDarkMode, color, typography } from "@/constants/theme";
 import { useNoteStore } from "@/store/notesStore";
@@ -29,6 +29,12 @@ const TABS: TabConfig[] = [
     iconActive: "bulb",
     iconInactive: "bulb-outline",
   },
+  {
+    name: "stats/index",
+    title: "Stats",
+    iconActive: "stats-chart",
+    iconInactive: "stats-chart-outline",
+  }
 ];
 
 export default function TabsLayout() {
@@ -41,6 +47,9 @@ export default function TabsLayout() {
   const setStoreAvatarUrl = useNoteStore((state) => state.setAvatarUrl);
 
   useEffect(() => {
+    if(Platform.OS === "web"){
+      return;
+    }
     const loadAvatar = async () => {
       const user = getAuth().currentUser;
       if(!user) return;
@@ -75,8 +84,9 @@ export default function TabsLayout() {
           <Text style={[styles.title, { color: theme.colors.text }]}>NoteFlow</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable onPress={() => router.push("/archived")} style={{ padding: 8, borderRadius: 8,
-    backgroundColor: theme.colors.surfaceVariant }}>
+          <Pressable 
+            onPress={() => router.push("/archived")} 
+            style={{ padding: 8, borderRadius: 8, backgroundColor: theme.colors.surfaceVariant }}>
             <Ionicons name="archive-outline" size={20} color={theme.colors.text} />
           </Pressable>
           <Pressable style={styles.avatar} onPress={() => router.push("/profile")}>

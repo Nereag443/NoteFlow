@@ -26,6 +26,7 @@ export interface ChecklistItem {
   id: string;
   text: string;
   isCompleted: boolean;
+  deadline?: Date;
 }
 
 export interface Checklist extends BaseNote {
@@ -67,3 +68,12 @@ export type ArchiveSection = {
     data: AnyNote[];
     type: "note" | "checklist" | "idea";
 };
+
+export interface Challenge {
+  id: string;
+  title: string;
+  goal: number;
+  deadline: Date;
+  completed: boolean;
+  createdAt: Date;
+}
