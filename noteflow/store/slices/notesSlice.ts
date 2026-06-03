@@ -54,8 +54,14 @@ export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
   updateNote: async (id, data) => {
     try {
       const updated = await api.updateNote(id, data);
+      const normalized = {
+        ...updated,
+        content: updated.content ?? [],
+        createdAt: new Date(updated.created_at),
+        updatedAt: new Date(updated.updated_at),
+      }
       set((state) => ({
-        notes: state.notes.map((n) => n.id === id ? updated : n),
+        notes: state.notes.map((n) => n.id === id ? normalized : n),
       }));
     }catch {
       set( { errorNotes: 'Error al actualizar nota' })
@@ -72,8 +78,14 @@ export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
   archiveNote: async (id) => {
     try {
       const updated = await api.updateNote(id, { archived: true });
+      const normalized = {
+        ...updated,
+        content: updated.content ?? [],
+        createdAt: new Date(updated.created_at),
+        updatedAt: new Date(updated.updated_at),
+      };
       set((state) => ({
-        notes: state.notes.map((n) => n.id === id ? updated : n
+        notes: state.notes.map((n) => n.id === id ? normalized : n
         ),
       }));
     } catch {
@@ -83,8 +95,14 @@ export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
   unarchiveNote: async (id) => {
     try {
       const updated = await api.updateNote(id, { archived: false });
+      const normalized = {
+        ...updated,
+        content: updated.content ?? [],
+        createdAt: new Date(updated.created_at),
+        updatedAt: new Date(updated.updated_at),
+      };
       set((state) => ({
-      notes: state.notes.map((n) => n.id === id ?  updated : n
+      notes: state.notes.map((n) => n.id === id ?  normalized : n
       ),
     }));
     } catch {
