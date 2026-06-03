@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { View, StyleSheet, Text, Pressable, Image, Alert, Modal } from "react-native";
+import { View, StyleSheet, Text, Pressable, Image, Alert, Modal, Platform } from "react-native";
 import { color, radius, spacing, typography, useAppTheme, useIsDarkMode } from "@/constants/theme";
 import { getAuth, signOut } from "@react-native-firebase/auth";
 import { useNoteStore } from "@/store/notesStore";
@@ -14,7 +14,7 @@ import { useCallback } from "react";
 
 export default function ProfileScreen(){
     const theme = useAppTheme();
-    const user = getAuth().currentUser;
+    const user = Platform.OS === "web" ? null : getAuth().currentUser;
     const toggleTheme = useNoteStore((state) => state.toggleTheme);
     const isDarkMode = useIsDarkMode();
     const themeMode = useNoteStore((state) => state.themeMode);
@@ -26,6 +26,9 @@ export default function ProfileScreen(){
 
     useFocusEffect(
         useCallback(() => {
+            if(Platform.OS === "web"){
+                return;
+            }
         const loadProfile = async () => {
             if (!user) return;
             const db = getFirestore();

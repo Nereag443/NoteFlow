@@ -1,7 +1,7 @@
 import { useNoteStore } from "@/store/notesStore";
 import { Stack, router } from "expo-router";
 import { ActivityIndicator, PaperProvider } from "react-native-paper";
-import { View, useColorScheme } from "react-native";
+import { View, useColorScheme, Platform } from "react-native";
 import { color, lightTheme, darkTheme } from "@/constants/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
@@ -20,6 +20,10 @@ export default function RootLayout() {
   const theme = resolvedScheme === "dark" ? darkTheme : lightTheme;
 
   useEffect(() => {
+    if(Platform.OS === "web"){
+      setUser(null);
+      return;
+    }
     const firebaseAuth = getAuth();
     const unsubscribe = onAuthStateChanged(firebaseAuth, (firebaseUser) => {
       setUser(firebaseUser);
