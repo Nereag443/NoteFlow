@@ -43,7 +43,8 @@
           "cameraPermission": "Noteflow necesita acceso a la cámara para cambiar la su foto de perfil",
           "photosPermission": "Noteflow necesita acceso a su galería para cambiar la foto de su perfil"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "scheme": "noteflow",
     "extra": {

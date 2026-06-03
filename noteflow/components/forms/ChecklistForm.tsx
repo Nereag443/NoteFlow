@@ -2,6 +2,7 @@ import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { useState } from 'react';
 import { color, typography, spacing, radius, useAppTheme } from '@/constants/theme';
 import { Priority } from '@/types';
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 interface ChecklistFormProps {
     title: string;
@@ -13,11 +14,14 @@ interface ChecklistFormProps {
     onColorChange?: (color: string) => void;
     priority: Priority;
     onPriorityChange: (priority: Priority) => void;
+    deadline: Date;
+    onDeadlineChange: (date: Date) => void;
 }
 
-export default function ChecklistForm({ title, items, onTitleChange, onItemsChange, errors, priority, onPriorityChange }: ChecklistFormProps) {
+export default function ChecklistForm({ title, items, onTitleChange, onItemsChange, errors, priority, onPriorityChange, deadline, onDeadlineChange }: ChecklistFormProps) {
     const theme = useAppTheme();
     const [itemInput, setItemInput] = useState("");
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const addItem = () => {
         if (itemInput.trim()) {
             onItemsChange([...items, itemInput.trim()]);
@@ -81,6 +85,9 @@ export default function ChecklistForm({ title, items, onTitleChange, onItemsChan
                     </View>
                 ))}
             </View>
+            <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]} onPress={addItem}>
+                <Text style={styles.addButtonText}>Agregar tarea</Text>
+            </Pressable>
             <Text style={[styles.label, { color: theme.colors.textMuted }]}>Prioridad</Text>
             <View style={styles.priorityContainer}>
                 {(["low", "medium", "high"] as Priority[]).map((level) => (
@@ -105,9 +112,29 @@ export default function ChecklistForm({ title, items, onTitleChange, onItemsChan
                         </Pressable>
                 ))}
             </View>
-            <Pressable style={[styles.addButton, { backgroundColor: theme.colors.primary }]} onPress={addItem}>
-                <Text style={styles.addButtonText}>Agregar tarea</Text>
+
+            <Text style={[styles.label, { color: theme.colors.textMuted }]}>Fecha límite</Text>
+            <Pressable
+                style={[styles.date, { borderColor: theme.colors.border, justifyContent: "center" }]}
+                onPress={() => setShowDatePicker(true)}
+            >
+                <Text style={{ color: theme.colors.text }}>
+                    {deadline ? deadline.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Selecciona una fecha"}
+                </Text>
             </Pressable>
+            {showDatePicker && (
+                <DateTimePicker
+                    value={deadline}
+                    mode="date"
+                    minimumDate={new Date()}
+                    onChange={(event, date) => {
+                        setShowDatePicker(false);
+                        if(date){
+                            onDeadlineChange(date);
+                        }
+                    }}
+                />
+            )}
         </View>
     );
 }
@@ -167,6 +194,7 @@ const styles = StyleSheet.create({
         paddingVertical: spacing[3],
         borderRadius: radius.md,
         alignItems: 'center',
+        marginBottom: spacing[4],
     },
     addButtonText: {
         color: color.neutral[0],
@@ -184,5 +212,11 @@ const styles = StyleSheet.create({
         borderRadius: radius.md,
         borderWidth: 1,
         alignItems: "center",
+    },
+    date:{
+        borderWidth: 1,
+        borderRadius: radius.md,
+        padding: spacing[3],
+        fontSize: typography.fontSize.md,
     },
 });
