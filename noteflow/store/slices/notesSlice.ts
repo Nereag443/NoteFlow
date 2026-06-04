@@ -1,6 +1,7 @@
 import { Note } from "@/types";
 import { StateCreator } from "zustand";
 import * as api from "@/lib/api"
+import { getCurrentLocation } from "@/lib/location";
 
 export interface NotesSlice {
   notes: Note[];
@@ -38,14 +39,26 @@ export const createNotesSlice: StateCreator<NotesSlice> = (set) => ({
   },
   addNote: async (data) => {
     try {
-      const note = await api.createNote(data);
+      const location = await getCurrentLocation();
+      const note = await api.createNote({
+        ...data,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        location_name: location?.locationName,
+      });
       const normalized = {
         ...note,
         content: note.content ?? [],
         createdAt: new Date(note.created_at),
         updatedAt: new Date(note.updated_at)
       }
-      set((state) => ({ notes: [...state.notes, normalized] }));
+      set((state) => ({ notes: [{
+        ...note,
+        content: note.content ?? '',
+        createdAt: new Date(note.created_at),
+        updatedAt: new Date(note.updated_at),
+      }, ...state.notes] 
+    }));
       return normalized;
     }catch {
       set({ errorNotes: 'Error al crear nota' })

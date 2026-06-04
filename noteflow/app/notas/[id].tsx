@@ -3,12 +3,12 @@ import { useLocalSearchParams, Stack } from "expo-router";
 import { useNoteStore } from "@/store/notesStore";
 import { color, typography, spacing, radius, useAppTheme } from "@/constants/theme";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function NoteDetail() {
     const theme = useAppTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
     const note = useNoteStore((state) => state.notes.find((n) => n.id === id));
-
     if (!note) {
         return (
             <View style={[styles.notFound, { backgroundColor: theme.colors.background }]}> 
@@ -71,6 +71,10 @@ export default function NoteDetail() {
                     <View style={styles.metaRow}>
                         <Text style={[styles.metaText, { color: theme.colors.textMuted }]}>Actualizado: {updatedDate}</Text>
                         <Text style={[styles.metaText, { color: theme.colors.textMuted }]}>Creado: {createdDate}</Text>
+                        <View style={styles.locationRow}>
+                        <Ionicons name="location-outline" size={16} color={theme.colors.textMuted} /> 
+                        <Text style={[styles.metaText, { color: theme.colors.textMuted }]}>{note.location_name ?? "Sin ubicación"}</Text>
+                        </View>
                     </View>
                 </View>
 
@@ -80,14 +84,19 @@ export default function NoteDetail() {
                     <TextInput
                         style={[styles.content, { color: theme.colors.text }]}
                         value={contentValue}
-                        onChangeText={(text) => {
-                            setContentValue(text);
-                            updateNote(note.id, { content: text });
-                        }}
+                        onChangeText={setContentValue}
                         multiline
                         placeholder="Escribe aquí tu nota..."
                         placeholderTextColor={theme.colors.textMuted}
                         textAlignVertical="top"
+                        returnKeyType="done"
+                        blurOnSubmit={true}
+                        onBlur={() => {
+                            updateNote(note.id, { content: contentValue });
+                        }}
+                        onSubmitEditing={() => {
+                            updateNote(note.id, { content: contentValue });
+                        }}
                     />
                 </View>
             </ScrollView>
@@ -209,5 +218,10 @@ const styles = StyleSheet.create({
     tipText: {
         fontSize: typography.fontSize.md,
         lineHeight: 22,
+    },
+    locationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing[2],
     },
 });

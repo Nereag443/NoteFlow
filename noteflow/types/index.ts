@@ -20,19 +20,23 @@ export interface BaseNote {
 export interface Note extends BaseNote {
   content: string;
   archived: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  location_name?: number | null;
 }
 
 export interface ChecklistItem {
   id: string;
   text: string;
   isCompleted: boolean;
-  deadline?: Date;
 }
 
 export interface Checklist extends BaseNote {
   items: ChecklistItem[];
   priority: Priority;
   archived: boolean;
+  deadline?: Date;
+  notificationId?: string | null;
 }
 
 export interface IdeaNote extends BaseNote {

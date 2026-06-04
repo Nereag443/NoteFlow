@@ -34,6 +34,9 @@ export async function createNote(data: {
     title: string;
     content?: string;
     archived?: boolean;
+    latitude?: number | null;
+    longitude?: number | null;
+    location_name?: string | null;
 }) {
     const res = await fetch(`${BASE_URL}/notes`, {
         method: 'POST',
