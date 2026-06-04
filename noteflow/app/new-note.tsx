@@ -40,6 +40,7 @@ export default function NewNote() {
     const navigation = useNavigation();
     const generateId = () => Math.random().toString(36).slice(2);
     const [priority, setPriority] = useState<Priority>("low");
+    const [deadline, setDeadline] = useState<Date | null>(null);
     const pageTitle =
       type === "note"
         ? "Nueva nota"
@@ -74,7 +75,7 @@ export default function NewNote() {
           setErrors({ title: result.error.issues[0].message });
           return;
         }
-        const checklist = await addChecklist({ title, priority });
+        const checklist = await addChecklist({ title, priority, deadline: deadline ?? undefined  });
         if(!checklist) return;
         const validItems = checklistItems.filter((text) => text.trim().length >0);
         for (const text of validItems) {
@@ -138,6 +139,8 @@ export default function NewNote() {
                 errors={errors}
                 priority={priority}
                 onPriorityChange={setPriority}
+                deadline={deadline ?? new Date()}
+                onDeadlineChange={setDeadline}
               />
             )}
             {type === "idea" && (

@@ -6,6 +6,8 @@ import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Priority } from "@/types";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { scheduleDeadlineReminder, cancelReminder } from "../services/notificationService";
 
 export default function ChecklistDetail() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +24,9 @@ export default function ChecklistDetail() {
     const [titleValue, setTitleValue] = useState(checklist?.title ?? "");
     const [editingItemId, setEditingItemId] = useState<string | null>(null);
     const [editingItemText, setEditingItemText] = useState("");
+    const updateChecklistDeadline = useNoteStore((state) => state.updateChecklistDeadline);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const updateChecklistNotificationId = useNoteStore((state) => state.updateChecklistNotificationId);
     const PRIORITIES: { label: string; value: Priority; color: string }[] = [
       { label: "Baja", value: "low", color: color.priority.low },
       { label: "Media", value: "medium", color: color.priority.medium },
@@ -106,6 +111,35 @@ export default function ChecklistDetail() {
                   );
                 })}
               </View>
+              <Pressable
+                onPress={() => setShowDatePicker(true)}
+                style={[styles.deadlineBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.surface }]}
+              >
+                <Ionicons name="calendar-outline" size={16} color={theme.colors.textMuted} />
+                <Text style={[styles.deadlineText, { color: theme.colors.textMuted }]}>
+                  {checklist.deadline
+                    ? new Date (checklist.deadline).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })
+                    : "Añadir fecha límite"}
+                </Text>
+              </Pressable>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={checklist.deadline ? new Date(checklist.deadline) : new Date()}
+                  mode="date"
+                  minimumDate={new Date()}
+                  onChange={async (event, date) => {
+                    setShowDatePicker(false);
+                    if(date){
+                      if(checklist.notificationId){
+                        await cancelReminder(checklist.notificationId)
+                      };
+                      const notificationId = await scheduleDeadlineReminder(checklist.id, checklist.title, date);
+                      updateChecklistNotificationId(checklist.id, notificationId);
+                      updateChecklistDeadline(checklist.id, date);
+                    }
+                  }}
+                />
+              )}
                 <Text style={[styles.counter, { color: theme.colors.textMuted }]}>{completed}/{total} completadas</Text>
                 <View style={[styles.progressTrack, { backgroundColor: theme.colors.border }]}> 
                     <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.colors.primary }]} />
@@ -318,5 +352,17 @@ const styles = StyleSheet.create({
   priorityChipText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-},
+  },
+  deadlineBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[1],
+    padding: spacing[3],
+    borderRadius: radius.md,
+    borderWidth: 1,
+    marginBottom: spacing[4],
+  },
+  deadlineText: {
+    fontSize: typography.fontSize.sm,
+  },
 });

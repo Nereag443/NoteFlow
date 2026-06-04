@@ -7,7 +7,7 @@ export interface ChecklistSlice {
   isLoadingChecklists: boolean;
   errorChecklists: string | null;
   fetchChecklists: () => Promise<void>;
-  addChecklist: (data: { title: string; priority?: Priority }) => Promise<any>;
+  addChecklist: (data: { title: string; priority?: Priority, deadline?: Date }) => Promise<any>;
   deleteChecklist: (id: string) => Promise<void>;
   toggleChecklistItem: (checklistId: string, itemId: string) => Promise<void>;
   addChecklistItem: (checklistId: string, text: string) => Promise<void>;
@@ -17,6 +17,8 @@ export interface ChecklistSlice {
   updateChecklistPriority: (checklistId: string, priority: Priority) => Promise<void>;
   archiveChecklist: (id: string) => Promise<void>;
   unarchiveChecklist: (id: string) => Promise<void>;
+  updateChecklistDeadline: (checklistId: string, deadline: Date) => Promise<void>;
+  updateChecklistNotificationId: (checklistId: string, notificationId: string | null) => void;
 }
 
 export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => ({
@@ -33,6 +35,7 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
                 items: c.items ?? [],
                 createdAt: new Date(c.created_at),
                 updatedAt: new Date(c.updated_at),
+                deadline: c.deadline ? new Date(c.deadline) : null,
             }))
         });
     } catch {
@@ -42,8 +45,10 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
     }
 },
   addChecklist: async (data) => {
+    console.log('adding ckecklist:', JSON.stringify(data));
     try {
         const checklist = await api.createChecklist(data);
+        console.log('created:', JSON.stringify(checklist));
         const normalized = {
             ...checklist,
             items: checklist.items ?? [],
@@ -52,7 +57,8 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
         };
         set((state) => ({ checklists: [...state.checklists, normalized] }));
         return normalized;
-    } catch {
+    } catch(e) {
+        console.log('error:', e)
         set({ errorChecklists: 'Error al crear checklist' });
     }
   },
@@ -118,7 +124,7 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
         ),
         }));
       } catch {
-        set({ errorChecklists: 'Erroal al actualizar título' });
+        set({ errorChecklists: 'Error al al actualizar título' });
       }
     },
       updateChecklistItem: async (checklistId, itemId, text) => {
@@ -182,9 +188,27 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
           checklists: state.checklists.map((c) =>
               c.id === id ? { ...c, archived: updated.archived } : c
           ),
-      }));
-    } catch {
-      set({ errorChecklists: 'Error al desarchivar checklist' })
-    }
-  },
+          }));
+        } catch {
+          set({ errorChecklists: 'Error al desarchivar checklist' })
+        }
+      },
+      updateChecklistDeadline: async (checklistId, deadline) => {
+        try {
+          await api.updateChecklist(checklistId, { deadline });
+          set((state) => ({
+            checklists: state.checklists.map((c) =>
+              c.id !== checklistId ? c : { ...c, deadline, updatedAt: new Date() }
+            ),
+          }));
+        } catch {
+          set({ errorChecklists: 'Error al actualizar fecha límite' });
+        }
+      },
+      updateChecklistNotificationId:(checklistId, notificationId) =>
+        set((state) => ({
+          checklists: state.checklists.map((c) =>
+            c.id !== checklistId ? c : { ...c, notificationId }
+          ),
+      })),
 });

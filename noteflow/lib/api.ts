@@ -86,11 +86,15 @@ export async function createChecklist(data: {
     title: string;
     priority?: 'low' | 'medium' | 'high';
     archived?: boolean;
+    deadline?: Date;
 }) {
     const res = await fetch(`${BASE_URL}/checklists`, {
         method: 'POST',
         headers: await authHeaders(),
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+            ...data,
+            deadline: data.deadline?.toISOString(),
+        }),
     })
     if(!res.ok) {
         throw new Error('Error al crear item')
@@ -102,11 +106,15 @@ export async function updateChecklist(id: string, data: {
     title?: string;
     priority?: 'low' | 'medium' | 'high';
     archived?: boolean;
+    deadline?: Date | null;
 }) {
     const res = await fetch(`${BASE_URL}/checklists/${id}`, {
         method: 'PATCH',
         headers: await authHeaders(),
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+            ...data,
+            deadline: data.deadline?.toISOString() ?? null,
+        }),
     })
     if(!res.ok) {
         throw new Error('Error al actualizar checklist')

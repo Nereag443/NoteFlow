@@ -79,6 +79,11 @@ export default function ChecklistCard({ checklist, onPress, onArchive }: Checkli
                 <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.colors.primary }]} />
             </View>
             <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
+            {checklist.deadline && (
+                <Text style={[styles.deadline, { color: new Date() > new Date(checklist.deadline) ? color.semantic.error : theme.colors.textMuted }]}>
+                    Fecha límite: {new Date(checklist.deadline).toLocaleString("es-ES", { day: "numeric", month: "short" })}
+                </Text>
+            )}
         </Pressable>
         </Animated.View>
         </ReanimatedSwipeable>
@@ -144,4 +149,8 @@ const styles = StyleSheet.create({
         opacity: 0.96,
         transform: [{ scale: 0.985 }],
     },
+    deadline:{
+        fontSize: typography.fontSize.xs,
+        marginTop: spacing[1],
+    }
 })
