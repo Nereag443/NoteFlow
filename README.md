@@ -37,6 +37,8 @@ noteflow/
 │   │   └── [id].tsx            # Detalle de idea
 │   ├── notas/
 │   │   └── [id].tsx            # Detalle y edición de nota
+│   ├── services/
+│   │   └── notificationService.tsx  # Gestión de notificaciones push y recordatorios
 │   ├── _layout.tsx             # Layout raíz
 │   ├── archived.tsx            # Pantalla de elementos archivados
 │   ├── index.tsx               # Redirección a pantalla principal
