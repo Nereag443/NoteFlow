@@ -1,6 +1,7 @@
 import { Checklist, Priority, ChecklistItem } from "@/types";
 import { StateCreator } from "zustand";
 import * as api from "@/lib/api";
+import { getCurrentLocation } from "@/lib/location";
 
 export interface ChecklistSlice {
   checklists: Checklist[];
@@ -45,21 +46,24 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
     }
 },
   addChecklist: async (data) => {
-    console.log('adding ckecklist:', JSON.stringify(data));
     try {
-        const checklist = await api.createChecklist(data);
-        console.log('created:', JSON.stringify(checklist));
-        const normalized = {
-            ...checklist,
-            items: checklist.items ?? [],
-            createdAt: new Date(checklist.created_at),
-            updatedAt: new Date(checklist.updated_at),
-        };
-        set((state) => ({ checklists: [...state.checklists, normalized] }));
-        return normalized;
-    } catch(e) {
-        console.log('error:', e)
-        set({ errorChecklists: 'Error al crear checklist' });
+      const location = await getCurrentLocation();
+      const checklist = await api.createChecklist({
+        ...data,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        location_name: location?.locationName,
+      });
+      const normalized = {
+        ...checklist,
+        items: checklist.items ?? [],
+        createdAt: new Date(checklist.created_at),
+        updatedAt: new Date(checklist.updated_at),
+      };
+      set((state) => ({ checklists: [...state.checklists, normalized] }));
+      return normalized;
+    } catch {
+      set({ errorChecklists: 'Error al crear checklist' });
     }
   },
   deleteChecklist: async (id) => {

@@ -37,12 +37,18 @@ export interface Checklist extends BaseNote {
   archived: boolean;
   deadline?: Date;
   notificationId?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  location_name?: number | null;
 }
 
 export interface IdeaNote extends BaseNote {
   tags: string[];
   color: string;
   archived:boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  location_name?: number | null;
 }
 
 export type AnyNote = Note | Checklist | IdeaNote;

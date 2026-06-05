@@ -1,6 +1,7 @@
 import { IdeaNote } from "@/types";
 import { StateCreator } from "zustand";
 import * as api from "@/lib/api";
+import { getCurrentLocation } from "@/lib/location";
 
 export interface IdeasSlice {
   ideas: IdeaNote[];
@@ -38,17 +39,23 @@ export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
 },
   addIdea: async (data) => {
     try {
-        const idea = await api.createIdea(data);
+      const location = await getCurrentLocation();
+      const idea = await api.createIdea({
+        ...data,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        location_name: location?.locationName,
+      });
         set((state) => ({ 
-            ideas: [{ 
-                ...idea, 
-                tags: (idea.tags ?? []).filter(Boolean),
-                createdAt: new Date(idea.created_at),
-                updatedAt: new Date(idea.updated_at),
-            }, ...state.ideas] 
+          ideas: [{ 
+            ...idea, 
+            tags: (idea.tags ?? []).filter(Boolean),
+            createdAt: new Date(idea.created_at),
+            updatedAt: new Date(idea.updated_at),
+          }, ...state.ideas] 
         }));
     } catch {
-        set({ errorIdeas: 'Error al crear idea' });
+      set({ errorIdeas: 'Error al crear idea' });
     }
   },
 

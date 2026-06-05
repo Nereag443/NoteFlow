@@ -90,6 +90,9 @@ export async function createChecklist(data: {
     priority?: 'low' | 'medium' | 'high';
     archived?: boolean;
     deadline?: Date;
+    latitude?: number | null;
+    longitude?: number | null;
+    location_name?: string | null;
 }) {
     const res = await fetch(`${BASE_URL}/checklists`, {
         method: 'POST',
@@ -187,6 +190,9 @@ export async function createIdea(data: {
     color?: string;
     archived?: boolean;
     tags?: string[];
+    latitude?: number | null;
+    longitude?: number | null;
+    location_name?: string | null;
 }) {
     const res = await fetch(`${BASE_URL}/ideas`, {
         method: 'POST',

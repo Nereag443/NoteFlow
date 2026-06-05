@@ -111,6 +111,10 @@ export default function ChecklistDetail() {
                   );
                 })}
               </View>
+              <View style={styles.location}>
+                <Ionicons name="location-outline" size={16} color={theme.colors.textMuted} /> 
+                <Text style={[styles.locationText, { color: theme.colors.textMuted }]}>{checklist.location_name ?? "Sin ubicación"}</Text>
+              </View>
               <Pressable
                 onPress={() => setShowDatePicker(true)}
                 style={[styles.deadlineBtn, { borderColor: theme.colors.border, backgroundColor: theme.colors.surface }]}
@@ -365,4 +369,13 @@ const styles = StyleSheet.create({
   deadlineText: {
     fontSize: typography.fontSize.sm,
   },
+  location:{
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[2],
+    marginBottom: spacing[2],
+  },
+  locationText:{
+    fontSize: typography.fontSize.sm,
+  }
 });

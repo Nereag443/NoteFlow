@@ -62,6 +62,10 @@ export default function IdeaDetail() {
                             <Text style={[styles.sectionHint, { color: theme.colors.textMuted }]}>Actualizado</Text>
                         </View>
                         <Text style={[styles.detailText, { color: theme.colors.text }]}>{formattedDate}</Text>
+                        <View style={styles.location}>
+                            <Ionicons name="location-outline" size={16} color={theme.colors.textMuted} /> 
+                            <Text style={[styles.locationText, { color: theme.colors.textMuted }]}>{idea.location_name ?? "Sin ubicación"}</Text>
+                        </View>
                         <View style={styles.divider} />
                         <Text style={[styles.sectionSubtitle, { color: theme.colors.textMuted }]}>Descripción</Text>
                         <TextInput
@@ -218,4 +222,13 @@ const styles = StyleSheet.create({
         fontSize: typography.fontSize.md,
         fontWeight: typography.fontWeight.semibold,
     },
+    location:{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing[2],
+        marginBottom: spacing[2],
+    },
+    locationText:{
+        fontSize: typography.fontSize.sm,
+    }
 });
