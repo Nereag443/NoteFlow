@@ -3,6 +3,7 @@ import { useNoteStore } from "@/store/notesStore";
 import { useAppTheme, color, typography, spacing, radius } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { ArchiveSection } from "@/types";
+import EmptyState from "@/components/EmptyState";
 
 export default function ArchivedScreen() {
     const theme = useAppTheme();
@@ -54,13 +55,14 @@ export default function ArchivedScreen() {
             unarchiveIdea(id);
         }
     };
-    if(sections.length === 0) {
+    if(filteredSections.length === 0) {
         return (
-            <View style={[styles.empty, { backgroundColor: theme.colors.background}]}>
-                <Ionicons name="archive-outline" size={48} color={theme.colors.textMuted} />
-                <Text style={[styles.emptyText, { color: theme.colors.textMuted}]}>
-                    No hay elementos archivados
-                </Text>
+            <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+                <EmptyState
+                    icon="archive-outline"
+                    title="No hay elementos archivados"
+                    subtitle="Los elementos que archives aparecerán aquí."
+                />        
             </View>
         );
     }
