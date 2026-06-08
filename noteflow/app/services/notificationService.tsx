@@ -33,9 +33,10 @@ export async function scheduleDeadlineReminder(checklistId: string, title: strin
     const hasPermission = await registerForPushNotificationsAsync();
     if (!hasPermission) return null;
     
-    const reminderDate = new Date();
-    reminderDate.setMinutes(reminderDate.getMinutes() + 1);
-    console.log('reminderDate:', reminderDate);
+    const reminderDate = new Date(deadline);
+    reminderDate.setDate(reminderDate.getDate() - 1);
+    reminderDate.setHours(9, 0, 0, 0);
+    if(reminderDate <= new Date()) return null;
     
     const id = await Notifications.scheduleNotificationAsync({
         content: {
@@ -48,7 +49,6 @@ export async function scheduleDeadlineReminder(checklistId: string, title: strin
             date: reminderDate,
         },
     });
-    console.log('notificationId:', id);
     return id;
 }
 export async function cancelReminder(notificationId: string){

@@ -33,7 +33,10 @@ export const createChecklistSlice: StateCreator<ChecklistSlice> = (set, get) => 
         set({
             checklists: checklists.map((c: any) => ({
                 ...c,
-                items: c.items ?? [],
+                items: (c.items ?? []).map((item: any) => ({
+                  ...item,
+                  isCompleted: item.is_completed,
+                })),
                 createdAt: new Date(c.created_at),
                 updatedAt: new Date(c.updated_at),
                 deadline: c.deadline ? new Date(c.deadline) : null,
