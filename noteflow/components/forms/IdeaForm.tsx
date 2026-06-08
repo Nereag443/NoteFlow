@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     label: {
         color: color.neutral[600],
         fontSize: typography.fontSize.sm,
-        marginBottom: spacing[2],
+        marginBottom: spacing[1],
         fontWeight: typography.fontWeight.medium,
     },
     input: {
