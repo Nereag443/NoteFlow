@@ -16,7 +16,7 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
     const theme = useAppTheme();
     return (
         <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
-        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: getIdeaColor(idea.color, theme.dark) }]} onPress={onPress}>
+        <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: getIdeaColor(idea.color, theme.dark), borderColor: theme.colors.border }]} onPress={onPress}>
             <Svg 
                 width={28}
                 height={28}
@@ -31,7 +31,7 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
                     opacity={0.6}
                 />
             </Svg>
-            <Text style={styles.title} numberOfLines={1}>{idea.title}</Text>
+            <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{idea.title}</Text>
             <View style={styles.tags}>
                 {idea.tags.map((tag) => (
                     <View key={tag} style={styles.chip}>
@@ -39,7 +39,7 @@ export default function IdeaCard({ idea, onPress }: IdeaCardProps) {
                     </View>
                 ))}
             </View>
-            <Text style={styles.date}>{date}</Text>
+            <Text style={[styles.date, { color: theme.colors.text }]}>{date}</Text>
         </Pressable>
         </Animated.View>
     );
@@ -50,6 +50,7 @@ const styles = StyleSheet.create ({
         width: CARD_WIDTH,
         minHeight: 160,
         borderRadius: radius.xl,
+        borderWidth: 1,
         padding: spacing[4],
         margin: spacing[2],
         shadowColor: color.neutral[900],

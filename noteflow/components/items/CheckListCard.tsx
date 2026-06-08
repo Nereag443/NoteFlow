@@ -78,7 +78,12 @@ export default function ChecklistCard({ checklist, onPress, onArchive }: Checkli
             <View style={[styles.progressTrack, { backgroundColor: theme.colors.surfaceVariant }]}> 
                 <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.colors.primary }]} />
             </View>
-            <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
+            <View style={styles.footerRow}>
+                <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
+                <View style={[styles.scoreBadge, { backgroundColor: theme.colors.surfaceVariant }]}> 
+                    <Text style={[styles.scoreText, { color: theme.colors.text }]}>{Math.round(progress * 100)}%</Text>
+                </View>
+            </View>
             {checklist.deadline && (
                 <Text style={[styles.deadline, { color: new Date() > new Date(checklist.deadline) ? color.semantic.error : theme.colors.textMuted }]}>
                     Fecha límite: {new Date(checklist.deadline).toLocaleString("es-ES", { day: "numeric", month: "short" })}
@@ -123,9 +128,24 @@ const styles = StyleSheet.create({
         height: 6,
         borderRadius: radius.full,
     },
+    footerRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: spacing[1],
+    },
     date: {
         fontSize: typography.fontSize.xs,
         color: color.neutral[400],
+    },
+    scoreBadge: {
+        borderRadius: radius.full,
+        paddingHorizontal: spacing[2],
+        paddingVertical: spacing[1],
+    },
+    scoreText: {
+        fontSize: typography.fontSize.xs,
+        fontWeight: typography.fontWeight.semibold,
     },
     rightAction: {
         justifyContent: "center", 

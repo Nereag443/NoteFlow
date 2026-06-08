@@ -69,19 +69,21 @@ export default function NoteCard({ note, onPress, onArchive }: NoteCardProps) {
         <Pressable style={({ pressed }) => [styles.card, pressed && styles.cardPressed, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderWidth: 1 }]} onPress={onPress}>
             <View style={[styles.accent, { backgroundColor: theme.colors.primary }]} />
             <View style={styles.content}>
-            <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{note.title}</Text>
-                <Ionicons name='chevron-forward' size={18} color={theme.colors.textMuted} />
-            </View>
-            {preview ? (
-                <Text style={[styles.preview, { color: theme.colors.textMuted }]} numberOfLines={2}>{preview}</Text>
-            ) : null}
-            <View style={styles.footer}>
-                <View style={styles.footerLeft}>
-                    <Ionicons name='time-outline' size={12} color={theme.colors.textMuted} />
-                    <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
+                <View style={styles.header}>
+                    <View style={styles.titleWrap}>
+                        <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{note.title}</Text>
+                    </View>
+                    <Ionicons name='chevron-forward' size={18} color={theme.colors.textMuted} />
                 </View>
-            </View>
+                {preview ? (
+                    <Text style={[styles.preview, { color: theme.colors.textMuted }]} numberOfLines={2}>{preview}</Text>
+                ) : null}
+                <View style={styles.footer}>
+                    <View style={[styles.dateBadge, { backgroundColor: theme.colors.surfaceVariant }]}> 
+                        <Ionicons name='time-outline' size={12} color={theme.colors.textMuted} />
+                        <Text style={[styles.date, { color: theme.colors.textMuted }]}>{date}</Text>
+                    </View>
+                </View>
             </View>
         </Pressable>
         </Animated.View>
@@ -117,12 +119,15 @@ const styles = StyleSheet.create({
         padding: spacing[4],
         gap: spacing[2],
     },
+    titleWrap: {
+        flex: 1,
+        gap: spacing[1],
+    },
     title: {
         flex: 1,
         fontSize: typography.fontSize.lg,
         fontWeight: typography.fontWeight.bold,
         color: color.neutral[900],
-        marginBottom: spacing[1],
     },
     preview: {
         fontSize: typography.fontSize.sm,
@@ -135,13 +140,16 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    footerLeft: {
+    dateBadge: {
         flexDirection: "row",
         alignItems: "center",
         gap: spacing[1],
+        borderRadius: radius.full,
+        paddingHorizontal: spacing[3],
+        paddingVertical: spacing[1],
     },
     date: {
-        fontSize: typography.fontSize.sm,
+        fontSize: typography.fontSize.xs,
         color: color.neutral[400],
     },
     header: {
