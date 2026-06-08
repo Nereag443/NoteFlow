@@ -11,7 +11,9 @@ export default function TypeSelector({ type, onSelectType }: TypeSelectorProps) 
     const theme = useAppTheme();
     const types: NoteType[] = ["note", "checklist", "idea"];
     return (
-        <View style={styles.container}>
+        <View>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textMuted }]}>Selecciona el tipo de contenido</Text>
+            <View style={styles.container}>
             {types.map((t) => (
                 <Pressable
                     key={t}
@@ -36,11 +38,18 @@ export default function TypeSelector({ type, onSelectType }: TypeSelectorProps) 
                     </Text>
                 </Pressable>
             ))}
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    sectionLabel: {
+        fontSize: typography.fontSize.xs,
+        textTransform: "uppercase",
+        letterSpacing: 0.7,
+        marginBottom: spacing[2],
+    },
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',

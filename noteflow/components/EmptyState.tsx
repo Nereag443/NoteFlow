@@ -12,8 +12,10 @@ interface EmptyStateProps {
 export default function EmptyState({ icon, title, subtitle }: EmptyStateProps) {
     const theme = useAppTheme();
     return (
-        <View style={[styles.container]}> 
-            <Ionicons name={icon} size={64} color={theme.colors.textMuted} />
+        <View style={styles.container}> 
+            <View style={[styles.iconBadge, { backgroundColor: theme.colors.surfaceVariant }]}> 
+                <Ionicons name={icon} size={28} color={theme.colors.primary} />
+            </View>
             <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
             <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>{subtitle}</Text>
         </View>
@@ -26,8 +28,15 @@ const styles = StyleSheet.create ({
         justifyContent: "center",
         alignItems: "center",
         gap: spacing[2],
-        maxWidth: 320,
+        maxWidth: 340,
         alignSelf: "center",
+    },
+    iconBadge: {
+        width: 56,
+        height: 56,
+        borderRadius: radius.full,
+        alignItems: "center",
+        justifyContent: "center",
     },
     title: {
         fontSize: typography.fontSize.lg,
