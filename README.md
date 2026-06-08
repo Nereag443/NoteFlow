@@ -25,6 +25,8 @@ noteflow/
 │   │    │   └── index.tsx      # Lista de ideas
 │   │    ├── notas/             # Módulo de notas
 │   │    │    └── index.tsx     # Lista de notas
+│   │    ├── stats/             # Módulo de estadísticas
+│   │    │   └── index.tsx      # Dashboard de estadísticas y actividad
 │   │    └── _layout.tsx        # Layout principal de tabs
 │   ├── auth/                   # Pantalla de autenticación
 │   │    ├── login/ 
@@ -61,9 +63,11 @@ noteflow/
 │   └── theme.ts                # Tema visual
 ├── lib/                        # Utilidades y servicios
 │   ├── api.ts                  # Funciones para llamar a la API REST
-│   └── auth.ts                 # Gestión del yoken de Firebase
+│   ├── auth.ts                 # Gestión del token de Firebase
+│   └── location.ts             # Servicios de geolocalización
 ├── store/                      # Estado global (Zustand)
 │   ├── slices/                 # Slices por módulo
+│   │   ├── challengeSlice.ts
 │   │   ├── checklistSlice.ts
 │   │   ├── ideasSlice.ts
 │   │   ├── notesSlice.ts
@@ -147,12 +151,12 @@ npx expo start --web
 - **Tres tipos de contenido**: notas de texto, checklists con progreso e ideas con etiquetas y color
 - **Edición inline**: edita el título y contenido directamente en la pantalla de detalle
 - **Prioridades**: asigna prioridad alta, media o baja a las checklists con indicador visual de color
+- **Fecha límite**: añade una fecha límite a las checklists con recordatorio por notificación de vencimineto
+- **Geolocalización**: asocia el contenido a tu ubicación actual
+- **Dashboard de estadísticas**: visualiza tu actividad, progreso y hábitos desde la pestaña Stats
 - **Filtros**: filtra checklists por prioridad y busca por título o etiquetas
 - **Archivar**: desliza a la izquierda para archivar notas y checklists; accede a los archivados desde el icono del header
 - **Modo oscuro/claro/sistema**: cambia el tema desde el botón en el header
-- **Animaciones**: transiciones fluidas con React Native Reanimated
-- **Haptics**: respuesta táctil al completar acciones en móvil
-- **Soporte web**: la app funciona también en navegador
 
 ## Ejemplos de uso
 
