@@ -4,12 +4,15 @@ import { useNoteStore } from "@/store/notesStore";
 import { color, spacing, radius, typography, useAppTheme, getIdeaColor } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-paper";
+import { useEffect, useState } from "react";
 
 export default function IdeaDetail() {
     const theme = useAppTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
     const idea = useNoteStore((state) => state.ideas.find((i) => i.id === id));
     const archiveIdea = useNoteStore((state) => state.archiveIdea);
+    const updateIdea = useNoteStore((state) => state.updateIdea);
+    const [contentValue, setContentValue] = useState(idea?.content ?? '');
 
     if (!idea) {
         return (
@@ -70,10 +73,19 @@ export default function IdeaDetail() {
                         <Text style={[styles.sectionSubtitle, { color: theme.colors.textMuted }]}>Descripción</Text>
                         <TextInput
                             style={[styles.bodyText, { color: theme.colors.text }]}
-                            value={idea.description}
+                            value={contentValue}
+                            onChangeText={setContentValue}
                             placeholder="Escribe más detalles sobre tu idea..."
                             placeholderTextColor={theme.colors.textMuted}
                             multiline
+                            returnKeyType="done"
+                            blurOnSubmit={true}
+                            onBlur={() => {
+                                updateIdea(idea.id, { content: contentValue });
+                            }}
+                            onSubmitEditing={() => {
+                                updateIdea(idea.id, { content: contentValue });
+                            }}
                         />
                     </View>
 

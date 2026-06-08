@@ -1,5 +1,6 @@
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://noteflow-api-sigma.vercel.app/api';
 
+import { string } from "zod";
 import { getToken } from "./auth";
 
 export async function authHeaders(){
@@ -193,6 +194,7 @@ export async function createIdea(data: {
     latitude?: number | null;
     longitude?: number | null;
     location_name?: string | null;
+    content?: string;
 }) {
     const res = await fetch(`${BASE_URL}/ideas`, {
         method: 'POST',
@@ -209,6 +211,7 @@ export async function updateIdea(id: string, data: {
     title?: string;
     color?: string;
     archived?: boolean;
+    content?: string;
 }) {
     const res = await fetch(`${BASE_URL}/ideas/${id}`, {
         method: 'PATCH',

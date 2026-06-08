@@ -8,7 +8,8 @@ export interface IdeasSlice {
   isLoadingIdeas: boolean;
   errorIdeas: string | null;
   fetchIdeas: () => Promise<void>;
-  addIdea: (data: { title: string; color?: string; tags?: string[] }) => Promise<void>;
+  addIdea: (data: { title: string; color?: string; tags?: string[]; content?: string; }) => Promise<void>;
+  updateIdea: (id: string, data: { content?: string }) => Promise<void>;
   deleteIdea: (id: string) => Promise<void>;
   archiveIdea: (id: string) => Promise<void>;
   unarchiveIdea: (id: string) =>Promise<void>;
@@ -56,6 +57,28 @@ export const createIdeasSlice: StateCreator<IdeasSlice> = (set) => ({
         }));
     } catch {
       set({ errorIdeas: 'Error al crear idea' });
+    }
+  },
+
+  updateIdea: async (id, data) => {
+    try {
+      const updated = await api.updateIdea(id, data);
+      set((state) => {
+        const existing = state.ideas.find(i => i.id === id);
+        const normalized = {
+          ...existing,
+        ...updated,
+        tags: existing?.tags ?? [],
+        content: updated.content ?? existing?.content ?? "",
+        createdAt: new Date(updated.created_at ?? existing?.createdAt),
+        updatedAt: new Date(updated.updated_at ?? existing?.updatedAt),
+      };
+      return {
+        ideas: state.ideas.map((i) => i.id === id ? normalized : i),
+      }
+      });
+    } catch{
+      set({ errorIdeas: 'Error al actualizar ideas' })
     }
   },
 

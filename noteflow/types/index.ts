@@ -49,6 +49,7 @@ export interface IdeaNote extends BaseNote {
   latitude?: number | null;
   longitude?: number | null;
   location_name?: number | null;
+  content?: string | null;
 }
 
 export type AnyNote = Note | Checklist | IdeaNote;
